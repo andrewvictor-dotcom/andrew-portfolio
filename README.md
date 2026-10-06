@@ -16,7 +16,7 @@ The live site: a single static page (`index.html`) on Vercel, with content and e
 
 ## Editing the site
 
-1. Open the site with `?admin` at the end, e.g. `https://andrew-portfolio.vercel.app/?admin`
+1. Open the site with `?admin` at the end, e.g. `https://andrew-portfolio-lemon.vercel.app/?admin`
 2. Enter your email and open the sign-in link it sends you, on the same device.
 3. Click **Edit site**, make changes, then **Publish changes**. Visitors see them on their next visit.
 
@@ -33,4 +33,4 @@ Only emails in the Supabase `owners` table can publish.
 
 ## Supabase settings
 
-Authentication → URL Configuration → **Site URL** must be the live address (e.g. `https://andrew-portfolio.vercel.app`) so sign-in links open the site.
+Authentication → URL Configuration → **Site URL** must be the live address (e.g. `https://andrew-portfolio-lemon.vercel.app`) so sign-in links open the site.
