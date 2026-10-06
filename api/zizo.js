@@ -41,6 +41,15 @@ async function askGemini(key, model, system, contents, fit, thinking) {
 
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
+  if (req.method === 'GET' && process.env.ZIZO_SALT && req.query && req.query.check === process.env.ZIZO_SALT) {
+    // owner-only health check: which Gemini models answer with this key
+    const key = process.env.GEMINI_API_KEY; const out = { hasKey: !!key, models: {} };
+    for (const m of [process.env.GEMINI_MODEL, 'gemini-flash-latest', 'gemini-flash-lite-latest', 'gemini-2.5-flash'].filter(Boolean)) {
+      try { const a = await askGemini(key, m, 'Reply with the single word: ok', [{ role: 'user', parts: [{ text: 'ping' }] }], false, false); out.models[m] = a.status + (a.text ? ' ' + a.text.slice(0, 20) : ''); } catch (e) { out.models[m] = 'error ' + e.message; }
+    }
+    try { const r = await fetch(SB_URL + '/rest/v1/site?id=eq.live&select=id', { headers: { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY } }); out.supabase = r.status; } catch (e) { out.supabase = 'error'; }
+    return res.json(out);
+  }
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' });
 
   let body = req.body;
