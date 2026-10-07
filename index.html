@@ -1187,6 +1187,9 @@ kbd{font-family:var(--mono);font-size:11px;border:1px solid var(--line);border-b
   .anv.on .pf:nth-child(2){--x:-21cqw;--r:0deg;--y:-1cqw}
   .anv.on .pf:nth-child(3){--x:-6cqw;--r:7deg;--y:3cqw}
 }
+
+.lp-scr,.pf-s{background-size:100% auto;background-repeat:no-repeat;background-position:top center;-webkit-transform:translateZ(0)}
+.lp-front,.lp-back{-webkit-backface-visibility:hidden}
 </style>
 </head>
 <body>
@@ -1356,9 +1359,9 @@ function animCover(p){
   var A=p.anim,sc=A.screens||[],t='<div class="an-txt">'+(A.before?'<span class="k">'+esc(A.beforeLabel||'Before')+'</span><s>'+esc(A.before)+'</s>':'')+'<span class="k k2">'+esc(A.afterLabel||'After')+'</span><b>'+esc(A.after)+'</b>'+(A.note?'<p>'+esc(A.note)+'</p>':'')+'</div>';
   var h='<div class="anv an-'+esc(A.kind)+'" role="img" aria-label="'+esc(p.title)+': '+esc([A.before&&('before '+A.before),A.after&&('after '+A.after)].filter(Boolean).join(', '))+'">';
   if(A.kind==='laptop'){
-    h+='<div class="lp"><div class="lp-dev"><div class="lp-lid"><div class="lp-front"><div class="lp-scr"><img src="'+esc(sc[0])+'" alt="" loading="lazy"></div></div><div class="lp-back"></div></div><div class="lp-deck"></div><div class="lp-base"></div></div></div>';
+    h+='<div class="lp"><div class="lp-dev"><div class="lp-lid"><div class="lp-front"><div class="lp-scr" style="background-image:url('+esc(sc[0])+')"><img src="'+esc(sc[0])+'" alt="" loading="eager" decoding="sync"></div></div><div class="lp-back"></div></div><div class="lp-deck"></div><div class="lp-base"></div></div></div>';
   }else{
-    h+='<div class="pf3">'+sc.slice(0,3).map(function(x,k){return '<div class="pf" style="--k:'+k+'"><div class="pf-s"><img src="'+esc(x)+'" alt="" loading="lazy"></div></div>'}).join('')+'</div>';
+    h+='<div class="pf3">'+sc.slice(0,3).map(function(x,k){return '<div class="pf" style="--k:'+k+'"><div class="pf-s" style="background-image:url('+esc(x)+')"><img src="'+esc(x)+'" alt="" loading="eager" decoding="sync"></div></div>'}).join('')+'</div>';
   }
   return h+t+'<span class="an-hint">'+(A.kind==='laptop'?'Hover to open':'Hover to see the screens')+'</span></div>';
 }
