@@ -12,7 +12,7 @@ fav="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6
 loader="""(function(){var S=window.SITE,done=false;
 function go(d){if(done)return;done=true;if(d&&d.profile)document.getElementById('state').textContent=JSON.stringify(d);var a=document.getElementById('app'),s=document.createElement('script');s.text=a.textContent;document.body.appendChild(s)}
 var t=setTimeout(function(){go(null)},1500);
-try{fetch(S.url+'/rest/v1/site?id=eq.live&select=data',{headers:{apikey:S.key,Authorization:'Bearer '+S.key}}).then(function(r){return r.ok?r.json():null}).then(function(j){clearTimeout(t);go(j&&j[0]&&j[0].data)},function(){clearTimeout(t);go(null)})}catch(e){clearTimeout(t);go(null)}})();"""
+try{fetch(S.url+'/rest/v1/site?id=eq.main&select=data',{headers:{apikey:S.key,Authorization:'Bearer '+S.key}}).then(function(r){return r.ok?r.json():null}).then(function(j){clearTimeout(t);go(j&&j[0]&&j[0].data)},function(){clearTimeout(t);go(null)})}catch(e){clearTimeout(t);go(null)}})();"""
 doc=f'''<!doctype html>
 <html lang="en">
 <head>

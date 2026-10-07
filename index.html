@@ -2195,7 +2195,7 @@ function agObserve(){if(!ag.io)return;ag.io.disconnect();['top','work','ai','res
 /* ---------- admin ---------- */
 function getP(o,path){return path.split('.').reduce(function(a,k){return a==null?a:a[k]},o)}
 function setP(o,path,v){var ks=path.split('.'),l=ks.pop(),t=ks.reduce(function(a,k){return a[k]},o);t[l]=v}
-function markDirty(){admin.dirty=JSON.stringify(state)!==saved;var f=$('#fabDot');if(f)f.hidden=!admin.dirty;var n=$('#pubNote');if(n){n.textContent=note();n.classList.toggle('warn',sizeMB()>12)}var pb=$('#pubBtn');if(pb)pb.disabled=!admin.dirty;try{if(admin.dirty)localStorage.setItem('av-draft',JSON.stringify(state));else localStorage.removeItem('av-draft')}catch(e){}}
+function markDirty(){admin.dirty=JSON.stringify(state)!==saved;var f=$('#fabDot');if(f)f.hidden=!admin.dirty;var n=$('#pubNote');if(n){n.textContent=note();n.classList.toggle('warn',sizeMB()>12)}var pb=$('#pubBtn');if(pb)pb.disabled=!admin.dirty;try{if(admin.dirty)localStorage.setItem('av-draft-v4',JSON.stringify(state));else localStorage.removeItem('av-draft-v4')}catch(e){}}
 function sizeMB(){return 0}
 function note(){return admin.dirty?'Unsaved changes':'All changes published'}
 var rt=0;function preview(){clearTimeout(rt);rt=setTimeout(function(){var y=scrollY;var cs=$('#cs'),st=cs?cs.scrollTop:0;var open=cs&&(state.projects.some(function(p){return p.id===csId})?csId:admin.edit);document.body.classList.add('no-intro');render();scrollTo(0,y);if(open){openCaseQuiet(open);var c2=$('#cs');if(c2)c2.scrollTop=st}},250)}
@@ -2308,7 +2308,7 @@ function renderAdmin(){
   if(!admin.can){r.innerHTML='';return}
   if(admin.preview){r.innerHTML='<div class="admin-fab"><button class="btn dark sm" type="button" id="exitPrev">Exit visitor preview</button></div>';$('#exitPrev').onclick=function(){admin.preview=false;renderAdmin()};return}
   var tabs=[['projects','Projects'],['shots','Shots'],['agent','Zizo (AI)'],['profile','Profile & about'],['resume','Resume'],['words','Testimonials'],['contact','Contact & links']];
-  var draft=null;try{draft=localStorage.getItem('av-draft')}catch(e){}
+  var draft=null;try{draft=localStorage.getItem('av-draft-v4')}catch(e){}
   var h='<div class="admin-fab"><button class="btn dark sm" type="button" id="fab"><span class="dirty-dot" id="fabDot"'+(admin.dirty?'':' hidden')+'></span>Edit site</button></div>';
   h+='<aside class="drawer'+(admin.open?' open':'')+'" aria-label="Site editor" id="drawer"><div class="d-head"><div class="d-top"><div><h2>Site editor</h2><p>Only you can see this. Visitors see the published page.</p></div><button class="ib" type="button" id="dClose" aria-label="Close editor">✕</button></div>';
   if(draft&&!admin.dirty&&draft!==saved)h+='<div class="banner"><span>You have unpublished edits from an earlier visit.</span><span style="display:flex;gap:6px"><button class="ib" type="button" id="dRestore">Restore</button><button class="ib" type="button" id="dDiscard">Discard</button></span></div>';
@@ -2321,8 +2321,8 @@ function renderAdmin(){
   $('#prevBtn').onclick=function(){admin.preview=true;admin.open=false;renderAdmin()};
   $('#pubBtn').onclick=publish;
   var so=$('#sOut');if(so)so.onclick=ownerSignOut;
-  var dr=$('#dRestore');if(dr)dr.onclick=function(){try{state=normalize(JSON.parse(localStorage.getItem('av-draft')));markDirty();preview()}catch(e){toast('That draft could not be read.')}};
-  var dd=$('#dDiscard');if(dd)dd.onclick=function(){try{localStorage.removeItem('av-draft')}catch(e){}renderAdmin()};
+  var dr=$('#dRestore');if(dr)dr.onclick=function(){try{state=normalize(JSON.parse(localStorage.getItem('av-draft-v4')));markDirty();preview()}catch(e){toast('That draft could not be read.')}};
+  var dd=$('#dDiscard');if(dd)dd.onclick=function(){try{localStorage.removeItem('av-draft-v4')}catch(e){}renderAdmin()};
   $$('[data-tab]').forEach(function(b){b.onclick=function(){admin.tab=b.getAttribute('data-tab');admin.edit=null;admin.armed=null;renderAdmin()}});
   var body=$('#dBody');
   body.oninput=function(e){var el=e.target,p=el.getAttribute('data-path');if(!p)return;var v=el.type==='checkbox'?el.checked:el.value;if(el.getAttribute('data-kind')==='lines')v=v.split('\n').map(function(s){return s.trim()}).filter(Boolean);
@@ -2448,7 +2448,7 @@ function webPublish(){
   return sbLoad().then(function(sb){
     return sb.auth.getSession().then(function(s){
       var u=s.data&&s.data.session&&s.data.session.user;if(!u||!isOwnerEmail(u.email))throw new Error('auth');
-      return uploadImages(sb).then(function(){return sb.from('site').upsert({id:'live',data:state,updated_at:new Date().toISOString()})}).then(function(r){if(r.error)throw r.error});
+      return uploadImages(sb).then(function(){return sb.from('site').upsert({id:'main',data:state,updated_at:new Date().toISOString()})}).then(function(r){if(r.error)throw r.error});
     });
   });
 }
@@ -2456,10 +2456,10 @@ function publish(){
   var pb=$('#pubBtn');if(!admin.can)return;
   pb.disabled=true;pb.textContent='Publishing…';
   webPublish().then(function(){
-    try{localStorage.removeItem('av-draft')}catch(e){}
+    try{localStorage.removeItem('av-draft-v4')}catch(e){}
     saved=JSON.stringify(state);pb.textContent='Publish changes';markDirty();renderAdmin();preview();toast('Published. Visitors see it on their next visit.');
   },function(err){
-    pb.disabled=false;pb.textContent='Publish changes';try{localStorage.setItem('av-draft',JSON.stringify(state))}catch(e){}
+    pb.disabled=false;pb.textContent='Publish changes';try{localStorage.setItem('av-draft-v4',JSON.stringify(state))}catch(e){}
     var m=String(err&&(err.message||err.error)||err);
     toast(/auth|JWT|401|403|row-level|policy/i.test(m)?'Your login expired. Sign in again from '+location.origin+'/?admin':'Publishing failed. Your edits are kept here, try again.');
   });
@@ -2509,6 +2509,6 @@ ownerBoot();
 <script>(function(){var S=window.SITE,done=false;
 function go(d){if(done)return;done=true;if(d&&d.profile)document.getElementById('state').textContent=JSON.stringify(d);var a=document.getElementById('app'),s=document.createElement('script');s.text=a.textContent;document.body.appendChild(s)}
 var t=setTimeout(function(){go(null)},1500);
-try{fetch(S.url+'/rest/v1/site?id=eq.live&select=data',{headers:{apikey:S.key,Authorization:'Bearer '+S.key}}).then(function(r){return r.ok?r.json():null}).then(function(j){clearTimeout(t);go(j&&j[0]&&j[0].data)},function(){clearTimeout(t);go(null)})}catch(e){clearTimeout(t);go(null)}})();</script>
+try{fetch(S.url+'/rest/v1/site?id=eq.main&select=data',{headers:{apikey:S.key,Authorization:'Bearer '+S.key}}).then(function(r){return r.ok?r.json():null}).then(function(j){clearTimeout(t);go(j&&j[0]&&j[0].data)},function(){clearTimeout(t);go(null)})}catch(e){clearTimeout(t);go(null)}})();</script>
 </body>
 </html>
