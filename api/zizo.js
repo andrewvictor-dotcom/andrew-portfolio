@@ -38,8 +38,9 @@ async function isOwner(req) {
 }
 
 async function askGemini(key, model, system, contents, fit, thinking) {
-  const generationConfig = { temperature: 0.6, maxOutputTokens: fit ? 1400 : 700 };
-  if (!thinking) generationConfig.thinkingConfig = { thinkingBudget: 0 };
+  // thinking on: Gemini also sends a short summary of its reasoning, shown as "Thought for Xs" in the chat
+  const generationConfig = { temperature: 0.6, maxOutputTokens: thinking ? (fit ? 4096 : 2048) : (fit ? 1400 : 700) };
+  generationConfig.thinkingConfig = thinking ? { includeThoughts: true } : { thinkingBudget: 0 };
   const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
@@ -48,8 +49,10 @@ async function askGemini(key, model, system, contents, fit, thinking) {
   if (!r.ok) return { status: r.status };
   const j = await r.json();
   const c = j.candidates && j.candidates[0];
-  const text = ((c && c.content && c.content.parts) || []).map((p) => p.text || '').join('').trim();
-  return { status: 200, text, truncated: c && c.finishReason === 'MAX_TOKENS' };
+  const parts = (c && c.content && c.content.parts) || [];
+  const text = parts.filter((p) => !p.thought).map((p) => p.text || '').join('').trim();
+  const thoughts = parts.filter((p) => p.thought).map((p) => p.text || '').join('\n\n').trim().slice(0, 3000);
+  return { status: 200, text, thoughts, truncated: c && c.finishReason === 'MAX_TOKENS' };
 }
 
 export default async function handler(req, res) {
@@ -88,13 +91,13 @@ export default async function handler(req, res) {
 
   const models = [...new Set([process.env.GEMINI_MODEL, 'gemini-flash-latest', 'gemini-flash-lite-latest', 'gemini-2.5-flash'].filter(Boolean))];
   for (const model of models) {
-    for (const thinking of [false, true]) {
+    for (const thinking of [true, false]) {
       try {
         const a = await askGemini(key, model, system, contents, !!body.fit, thinking);
         if (a.status === 200 && a.text) {
-          return res.json(owner ? { text: a.text, truncated: !!a.truncated, owner: true } : { text: a.text, truncated: !!a.truncated, left: Math.max(0, PER_VISITOR - (g.used || 0)) });
+          return res.json(owner ? { text: a.text, thoughts: a.thoughts || '', truncated: !!a.truncated, owner: true } : { text: a.text, thoughts: a.thoughts || '', truncated: !!a.truncated, left: Math.max(0, PER_VISITOR - (g.used || 0)) });
         }
-        if (a.status !== 400) break; // 400 may mean the thinking setting isn't supported: retry once with it on
+        if (a.status !== 400 && !(a.status === 200 && thinking)) break; // 400 or an empty thinking answer: retry once without thinking
       } catch (e) { break; }
     }
   }
