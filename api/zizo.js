@@ -24,6 +24,19 @@ async function gate(visitor) {
   return { allowed: true, used: 0 };
 }
 
+// Owner check: Andrew signed in on the site (Supabase session) gets no daily limit.
+const OWNER = String(process.env.OWNER_EMAIL || 'andrw.victor2@gmail.com').toLowerCase();
+async function isOwner(req) {
+  const h = String(req.headers.authorization || '');
+  if (!h.startsWith('Bearer ')) return false;
+  try {
+    const r = await fetch(SB_URL + '/auth/v1/user', { headers: { apikey: SB_KEY, Authorization: h } });
+    if (!r.ok) return false;
+    const u = await r.json();
+    return String((u && u.email) || '').toLowerCase() === OWNER;
+  } catch (e) { return false; }
+}
+
 async function askGemini(key, model, system, contents, fit, thinking) {
   const generationConfig = { temperature: 0.6, maxOutputTokens: fit ? 1400 : 700 };
   if (!thinking) generationConfig.thinkingConfig = { thinkingBudget: 0 };
@@ -69,7 +82,8 @@ export default async function handler(req, res) {
 
   const ip = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() || (req.socket && req.socket.remoteAddress) || 'unknown';
   const visitor = crypto.createHash('sha256').update(ip + '|' + (process.env.ZIZO_SALT || 'andrew-portfolio')).digest('hex').slice(0, 32);
-  const g = await gate(visitor);
+  const owner = await isOwner(req);
+  const g = owner ? { allowed: true, used: 0 } : await gate(visitor);
   if (!g.allowed) return res.json({ text: g.reason === 'global' ? BUSY_TEXT : LIMIT_TEXT, limited: true });
 
   const models = [...new Set([process.env.GEMINI_MODEL, 'gemini-flash-latest', 'gemini-flash-lite-latest', 'gemini-2.5-flash'].filter(Boolean))];
@@ -78,7 +92,7 @@ export default async function handler(req, res) {
       try {
         const a = await askGemini(key, model, system, contents, !!body.fit, thinking);
         if (a.status === 200 && a.text) {
-          return res.json({ text: a.text, truncated: !!a.truncated, left: Math.max(0, PER_VISITOR - (g.used || 0)) });
+          return res.json(owner ? { text: a.text, truncated: !!a.truncated, owner: true } : { text: a.text, truncated: !!a.truncated, left: Math.max(0, PER_VISITOR - (g.used || 0)) });
         }
         if (a.status !== 400) break; // 400 may mean the thinking setting isn't supported: retry once with it on
       } catch (e) { break; }
