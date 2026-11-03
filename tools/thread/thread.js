@@ -101,7 +101,7 @@ function thHome(P,links){
   return h;
 }
 /* ---- thread geometry: one line per stretch of page, drawn by scroll section by section ---- */
-var TH={segs:[],secs:[],raf:0,intro:document.getElementById('thLoad')?0:1};
+var G={},TH={segs:[],secs:[],raf:0,intro:document.getElementById('thLoad')?0:1};
 function thBuild(){
   var page=$('#thPage'),svg=$('#thThread');if(!page||!svg)return;thHxMode();
   var W=page.offsetWidth,H=page.offsetHeight,mob=W<760,pr=page.getBoundingClientRect();
@@ -124,7 +124,7 @@ function thBuild(){
     var M=thMeasure(P),len=p.getTotalLength()||M.len,rr=M.len?len/M.len:1;M.ptL=M.ptL.map(function(v){return v*rr});M.S.forEach(function(q){q[0]*=rr});
     p.style.strokeDasharray=len+' '+(len+20);p.style.strokeDashoffset=len+10;return {el:p,len:len,ptL:M.ptL,S:M.S}});
   TH.secs=secs.map(function(s,i){var sg=TH.segs[s.seg],nxt=secs[i+1],b=(nxt&&nxt.seg===s.seg)?(sg.ptL[nxt.k]||sg.len):sg.len;return {top:s.top,h:Math.max(1,s.h),seg:s.seg,a:sg.ptL[s.k]||0,b:b,hero:s.hero}});
-  thHx();thDraw();thOrbitDraw();
+  thGeo();thHx();thDraw();thOrbitDraw();
 }
 
 /* hero: the thread enters from the top-left corner of the screen and weaves through the headline — over one word, under the next */
@@ -148,33 +148,40 @@ function thMeasure(P){var ptL=[0],S=[[0,P[0][0],P[0][1]]],L=0;
     for(var k=1;k<=24;k++){var u=k/24,v=1-u,x=v*v*v*p1[0]+3*v*v*u*c1[0]+3*v*u*u*c2[0]+u*u*u*p2[0],y=v*v*v*p1[1]+3*v*v*u*c1[1]+3*v*u*u*c2[1]+u*u*u*p2[1];L+=Math.hypot(x-px,y-py);px=x;py=y;S.push([L,x,y])}
     ptL.push(L)}return {len:L,ptL:ptL,S:S}}
 function thAt(sg,L){var S=sg.S,lo=0,hi=S.length-1;if(!S||!S.length)return {x:0,y:0};while(hi-lo>1){var m=(lo+hi)>>1;if(S[m][0]<L)lo=m;else hi=m}var a=S[lo],b=S[hi],f=b[0]>a[0]?(L-a[0])/(b[0]-a[0]):0;return {x:a[1]+(b[1]-a[1])*f,y:a[2]+(b[2]-a[2])*f}}
+
+function thAbs(el){return el.getBoundingClientRect().top+scrollY}
+function thGeo(){var page=$('#thPage');if(!page)return;G.page=thAbs(page);
+  var w=$('#work.hx-on');if(w){var tr=$('.th-hx-track',w);G.w={top:thAbs(w),run:Math.max(1,w.offsetHeight-innerHeight),max:Math.max(0,tr.scrollWidth-innerWidth),lefts:$$('.th-proj',tr).map(function(s){return s.offsetLeft}),modes:$$('.th-proj',tr).map(function(s){return s.getAttribute('data-mode')}),intro:($('.th-hx-intro',w)||page).getAttribute('data-mode')}}else G.w=null;
+  var k=$('.kn');G.kn=k?{top:thAbs(k),run:Math.max(1,k.offsetHeight-innerHeight),h:k.offsetHeight}:null;
+  var o=$('#thOrbit');G.orb=o?thAbs(o):null;G.drift=$$('.th-drift .ln')}
 function thSpline(P){if(P.length<2)return '';var d='M'+P[0][0].toFixed(1)+' '+P[0][1].toFixed(1);
   for(var i=0;i<P.length-1;i++){var p0=P[i-1]||P[i],p1=P[i],p2=P[i+1],p3=P[i+2]||p2,t=.5;
     d+=' C'+(p1[0]+(p2[0]-p0[0])*t/3).toFixed(1)+' '+(p1[1]+(p2[1]-p0[1])*t/3).toFixed(1)+' '+(p2[0]-(p3[0]-p1[0])*t/3).toFixed(1)+' '+(p2[1]-(p3[1]-p1[1])*t/3).toFixed(1)+' '+p2[0].toFixed(1)+' '+p2[1].toFixed(1)}return d}
 function thDraw(){TH.raf=0;var page=$('#thPage');if(!page||!TH.secs.length)return;
-  var top=page.getBoundingClientRect().top,tip=-top+innerHeight*.62,want=TH.segs.map(function(){return 0}),pp=null;
+  var top=(G.page!=null?G.page:thAbs(page))-scrollY,tip=-top+innerHeight*.62,want=TH.segs.map(function(){return 0}),pp=null;
   TH.secs.forEach(function(s){var L=RM?s.b:(tip<s.top?null:s.a+(s.b-s.a)*Math.min(1,(tip-s.top)/s.h));if(s.hero&&!RM)L=s.a+(s.b-s.a)*TH.intro;if(L!=null&&L>=want[s.seg]){want[s.seg]=L;if(tip<s.top+s.h||RM)pp=[s.seg,L]}});
   TH.want=want;TH.pseg=pp?pp[0]:-1;if(!TH.cur||TH.cur.length!==want.length)TH.cur=want.map(function(){return 0});
   if(RM){TH.cur=want.slice();thPaint();return}
   if(!TH.fr){TH.lt=performance.now();TH.fr=requestAnimationFrame(thFollow)}}
-TH.V=760;
+TH.V=1500;
 function thFollow(t){var dt=Math.min(.05,Math.max(0,(t-TH.lt)/1000));TH.lt=t;var mv=false;
   TH.cur.forEach(function(c,i){var d=TH.want[i]-c;if(Math.abs(d)<.6){TH.cur[i]=TH.want[i];return}mv=true;
-    if(Math.abs(d)>2200){c=TH.want[i]-2200*Math.sign(d);d=TH.want[i]-c}
+    if(Math.abs(d)>900){c=TH.want[i]-900*Math.sign(d);d=TH.want[i]-c}
     var st=d*(1-Math.exp(-dt/.14)),cap=TH.V*dt;if(Math.abs(st)>cap)st=cap*Math.sign(st);TH.cur[i]=c+st});
   thPaint();TH.fr=mv?requestAnimationFrame(thFollow):0}
-function thPaint(){var pen=$('#thPen');TH.segs.forEach(function(sg,i){var L=TH.cur[i]||0;sg.el.style.strokeDashoffset=(sg.len-L+(L>0?0:10)).toFixed(1)});
-  var i=TH.pseg;if(pen){if(i>=0&&!RM&&TH.cur[i]>2){var q=thAt(TH.segs[i],TH.cur[i]);pen.setAttribute('cx',q.x);pen.setAttribute('cy',q.y);pen.style.opacity=1}else pen.style.opacity=0}}
+function thPaint(){var pen=$('#thPen');TH.segs.forEach(function(sg,i){var L=TH.cur[i]||0,v=(sg.len-L+(L>0?0:10)).toFixed(1);if(sg.lv!==v){sg.lv=v;sg.el.style.strokeDashoffset=v}});
+  var i=TH.pseg;if(pen){if(i>=0&&!RM&&TH.cur[i]>2){var q=thAt(TH.segs[i],TH.cur[i]),k=q.x.toFixed(1)+','+q.y.toFixed(1);if(TH.pk!==k){TH.pk=k;pen.setAttribute('cx',q.x.toFixed(1));pen.setAttribute('cy',q.y.toFixed(1))}if(TH.po!==1){TH.po=1;pen.style.opacity=1}}else if(TH.po!==0){TH.po=0;pen.style.opacity=0}}}
 
 /* ---- projects: horizontal track pinned while you scroll (desktop) ---- */
 function thHxMode(){var w=$('#work');if(!w)return;var on=innerWidth>=900&&!RM;TH.hx=on;w.classList.toggle('hx-on',on);
-  if(on){var tr=$('.th-hx-track',w);w.style.height=(innerHeight+Math.max(0,tr.scrollWidth-innerWidth))+'px'}else w.style.height=''}
-function thHx(){var w=$('#work.hx-on');if(!w)return;var tr=$('.th-hx-track',w),r=w.getBoundingClientRect(),max=Math.max(0,tr.scrollWidth-innerWidth),run=Math.max(1,w.offsetHeight-innerHeight),p=Math.max(0,Math.min(1,-r.top/run)),x=p*max;
-  tr.style.transform='translate3d('+(-x).toFixed(1)+'px,0,0)';
-  var ps=$$('.th-proj',tr),mid=x+innerWidth*.5,cur=-1;ps.forEach(function(s,i){if(s.offsetLeft<=mid)cur=i});
-  var n=$('.th-hx-n b',w);if(n)n.textContent=String(Math.max(1,cur+1)).padStart(2,'0');var g=$('.th-hx-prog i',w);if(g)g.style.transform='scaleX('+p.toFixed(4)+')';
-  var md=cur<0?$('.th-hx-intro',w).getAttribute('data-mode'):ps[cur].getAttribute('data-mode');$('.th-hx-pin',w).setAttribute('data-bar',md);
-  if(r.top<=0&&r.bottom>=innerHeight)document.documentElement.setAttribute('data-hdr',md)}
+  if(on){var tr=$('.th-hx-track',w);w.style.height=(innerHeight+Math.max(0,tr.scrollWidth-innerWidth)/1.7)+'px'}else w.style.height=''}
+function thHx(){var g=G.w,w=g&&$('#work.hx-on');if(!w)return;var top=g.top-scrollY,p=Math.max(0,Math.min(1,-top/g.run));
+  if(p===g.lp&&g.lw===innerWidth)return;g.lp=p;g.lw=innerWidth;var x=p*g.max;
+  $('.th-hx-track',w).style.transform='translate3d('+(-x).toFixed(1)+'px,0,0)';
+  var mid=x+innerWidth*.5,cur=-1;g.lefts.forEach(function(l,i){if(l<=mid)cur=i});
+  if(cur!==g.lc){g.lc=cur;var n=$('.th-hx-n b',w);if(n)n.textContent=String(Math.max(1,cur+1)).padStart(2,'0');var md=cur<0?g.intro:g.modes[cur];g.md=md;$('.th-hx-pin',w).setAttribute('data-bar',md)}
+  var gi=$('.th-hx-prog i',w);if(gi)gi.style.transform='scaleX('+p.toFixed(4)+')';
+  if(top<=0&&top+g.run+innerHeight>=innerHeight&&document.documentElement.getAttribute('data-hdr')!==g.md)document.documentElement.setAttribute('data-hdr',g.md)}
 document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href="#studies"],a[href="#work"]');var w=$('#work.hx-on');if(!a||!w)return;
   var t=a.getAttribute('href')==='#studies'?$('#studies'):null;e.preventDefault();var y=w.getBoundingClientRect().top+scrollY+(t?t.offsetLeft:0);scrollTo({top:y,behavior:'smooth'})},true);
 /* ---- password-protected case studies: content is encrypted and only decrypted with the right password ---- */
@@ -223,16 +230,17 @@ function thOrbitNodes(){var ov=$('#thOrbit'),svg=$('.th-orb-svg',ov),orb=ov.getB
     var samp=[];for(var L=0;L<=len;L+=4){var q=p.getPointAtLength(L);samp.push([L,q.x,q.y])}
     $$('li.'+s,ov).forEach(function(e){var x=parseFloat(e.style.left),y=parseFloat(e.style.top),best=1e12,bl=0;samp.forEach(function(q){var d=(q[1]-x)*(q[1]-x)+(q[2]-y)*(q[2]-y);if(d<best){best=d;bl=q[0]}});ORB[s].nodes.push([bl/len,e])})});
   var jt=$('.jn.t',svg),jb=$('.jn.b',svg);jt.setAttribute('cx',ORB.jt[0]);jt.setAttribute('cy',ORB.jt[1]);jb.setAttribute('cx',ORB.jb[0]);jb.setAttribute('cy',ORB.jb[1])}
-function thOrbitDraw(){var ov=$('#thOrbit');if(!ov||!ORB.l)return;var r=ov.getBoundingClientRect(),svg=$('.th-orb-svg',ov);
+function thOrbitDraw(){var ov=$('#thOrbit');if(!ov||!ORB.l)return;var r={top:(G.orb!=null?G.orb:thAbs(ov))-scrollY},svg=$('.th-orb-svg',ov);
   var p=RM?1:Math.max(0,Math.min(1,(innerHeight*.62-r.top-ORB.jt[1])/Math.max(1,ORB.jb[1]-ORB.jt[1])));
+  if(p===ORB.lp)return;ORB.lp=p;
   if(ORB.mob){var tot=ORB.l.len+ORB.r.len,d=p*tot;var pl=Math.min(1,d/ORB.l.len),prr=Math.max(0,(d-ORB.l.len)/ORB.r.len);thArc('l',pl,svg);thArc('r',prr,svg)}else{thArc('l',p,svg);thArc('r',p,svg)}
   $('.jn.t',svg).classList.toggle('on',p>0);$('.jn.b',svg).classList.toggle('on',p>=.995);ov.classList.toggle('done',p>=.995)}
 function thArc(s,p,svg){var A=ORB[s];A.el.style.strokeDashoffset=(A.len*(1-p)+(p>0?0:10)).toFixed(1);var pen=$('.pen.'+s,svg),q=A.el.getPointAtLength(A.len*p);pen.setAttribute('cx',q.x);pen.setAttribute('cy',q.y);pen.style.opacity=p>0&&p<.995?1:0;
   A.nodes.forEach(function(n){n[1].classList.toggle('on',p>=n[0]-.005)})}
 /* ---- testimonial stack: pinned, the top card leaves and the next comes forward ---- */
-function thCurtains(){if(RM)return;var vh=innerHeight;$$('#thPage .th-sec').forEach(function(s,i){if(i===0)return;var t=s.getBoundingClientRect().top;var p=Math.max(0,Math.min(1,(vh-t)/(vh*.85)));s.style.setProperty('--cr',(64*(1-p)).toFixed(1)+'px');})}
+function thCurtains(){return;var vh=innerHeight;$$('#thPage .th-sec').forEach(function(s,i){if(i===0)return;var t=s.getBoundingClientRect().top;var p=Math.max(0,Math.min(1,(vh-t)/(vh*.85)));s.style.setProperty('--cr',(64*(1-p)).toFixed(1)+'px');})}
 function thStack(){var s=$('.kn');if(!s)return;var ls=$$('.kn-leaf',s),n=ls.length;if(!n)return;
-  var r=s.getBoundingClientRect(),run=Math.max(1,s.offsetHeight-innerHeight),q=Math.max(0,Math.min(1,-r.top/run)),p=Math.max(0,Math.min(n,(q*1.12-.06)*n)),cur=Math.min(n-1,Math.floor(p+.5));
+  var g=G.kn;if(!g)return;var top=g.top-scrollY;if(top>innerHeight*1.2||top+g.h<-innerHeight*.2){if(g.lp!=null)return}var q=Math.max(0,Math.min(1,-top/g.run)),p=Math.max(0,Math.min(n,(q*1.12-.06)*n)),cur=Math.min(n-1,Math.floor(p+.5));if(p===g.lp)return;g.lp=p;
   ls.forEach(function(l,i){var f=Math.max(0,Math.min(1,p-i)),e=f<.5?2*f*f:1-Math.pow(-2*f+2,2)/2,ang=-180*e;
     l.style.transform='rotateY('+ang.toFixed(2)+'deg)';l.style.zIndex=String(f>.5?10+i:60-i);
     l.style.setProperty('--sh',(Math.sin(e*Math.PI)).toFixed(3));l.classList.toggle('flip',f>.5);l.classList.toggle('on',i===cur&&f<.5)});
@@ -255,7 +263,7 @@ function thCs(){var cs=$('#cs');if(!cs)return;if(cs.querySelector('.th-csl'))ret
   var up=function(){var p=cs.scrollTop/Math.max(1,cs.scrollHeight-cs.clientHeight);l.style.setProperty('--p',p.toFixed(4))};cs.addEventListener('scroll',up,{passive:true});up()}
 var DR={v:0,last:0,raf:0};
 function thDriftKick(){if(RM)return;var y=scrollY,dv=y-(DR.last||y);DR.last=y;DR.v=Math.max(-60,Math.min(60,DR.v+dv*.35));if(!DR.raf)DR.raf=requestAnimationFrame(thDriftStep)}
-function thDriftStep(){DR.v*=.9;$$('.th-drift .ln').forEach(function(l){var d=+(l.getAttribute('data-dir')||1);l.style.transform='translate3d('+(DR.v*d*.6).toFixed(2)+'px,0,0)'});DR.raf=Math.abs(DR.v)>.2?requestAnimationFrame(thDriftStep):0}
+function thDriftStep(){DR.v*=.9;(G.drift||$$('.th-drift .ln')).forEach(function(l){var d=+(l.getAttribute('data-dir')||1);l.style.transform='translate3d('+(DR.v*d*.6).toFixed(2)+'px,0,0)'});DR.raf=Math.abs(DR.v)>.2?requestAnimationFrame(thDriftStep):0}
 var SM={};addEventListener('keydown',function(e){if(e.key==='Tab')document.documentElement.classList.add('kb')});addEventListener('pointerdown',function(){document.documentElement.classList.remove('kb')});
 function thSmooth(el){if(RM||!FINE||el.__sm)return;el.__sm=1;var win=el===window,cur=0,tgt=0,raf=0,lock=false;
   function pos(){return win?scrollY:el.scrollTop}function max(){return win?document.documentElement.scrollHeight-innerHeight:el.scrollHeight-el.clientHeight}
@@ -268,7 +276,7 @@ function thSmooth(el){if(RM||!FINE||el.__sm)return;el.__sm=1;var win=el===window
 function thWire(){var page=$('#thPage');if(!page)return;
   $$('[data-case]',page).forEach(function(b){b.onclick=function(e){openCase(b.getAttribute('data-case'),e.clientX,e.clientY)}});
   $$('.th-proj',page).forEach(function(s){s.onclick=function(e){if(e.target.closest('a,[data-case]'))return;openCase(s.getAttribute('data-proj'),e.clientX,e.clientY)}});
-  if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(en){en.target.classList.toggle('on',en.isIntersecting)})},{threshold:.35});$$('[data-thv],[data-note],.th-oval,.th-steps,.th-cols,.th-sign,.th-hero',page).forEach(function(x){io.observe(x)})}
+  if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(en){en.target.classList.toggle('on',en.isIntersecting);if(en.isIntersecting)en.target.classList.add('seen')})},{threshold:.35});$$('[data-thv],[data-note],.th-oval,.th-steps,.th-cols,.th-sign,.th-hero',page).forEach(function(x){io.observe(x)})}
   else $$('[data-thv],.th-oval',page).forEach(function(x){x.classList.add('on')});
   var kn=$('.th-knot',page),ct=$('.th-ct',page),goal=0,cur=0,kr=0;thKnot(0);
   function kstep(){cur+=(goal-cur)*(RM?1:.08);thKnot(cur);kr=Math.abs(goal-cur)>.002?requestAnimationFrame(kstep):0}
@@ -285,6 +293,7 @@ function thWire(){var page=$('#thPage');if(!page)return;
   thBuild();setTimeout(thBuild,600);setTimeout(thBuild,2000);
   if(!thWire.once){thWire.once=true;addEventListener('scroll',function(){thDriftKick();if(!TH.raf)TH.raf=requestAnimationFrame(function(){thHx();thDraw();thOrbitDraw();thStack();thCurtains()})},{passive:true});
     var rt;addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(thBuild,150)});
+    if('ResizeObserver' in window){var lh=0,ro=new ResizeObserver(function(){var h=page.offsetHeight;if(Math.abs(h-lh)>2){lh=h;clearTimeout(rt);rt=setTimeout(thBuild,200)}});ro.observe(page)}
     if(document.fonts&&document.fonts.ready)document.fonts.ready.then(thBuild);addEventListener('load',thBuild)}
   thStack();nbFit();thCurtains();thLoaderDone();
 }

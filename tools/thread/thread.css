@@ -682,3 +682,11 @@ html[data-hdr=paper] .nav{--hbg:#EFEBE3}
 .th-cl-tr span::after{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--th-red);margin-left:44px;vertical-align:middle}
 /* no rounded section edges: they showed the previous section's colour as a dark corner */
 #thPage .th-sec{border-radius:0!important;--cr:0px!important}
+
+/* the thread gets its own layer so redrawing it doesn't repaint the page under it */
+.th-thread{will-change:transform;contain:layout style}
+
+/* lighter scrolling: shorter pinned sections, hero words animate in once */
+.kn{height:calc((var(--n) + .9) * 62vh)!important}
+.th-hero.seen .th-h1 .w{opacity:1;filter:none;transform:none}
+.th-hero.seen .th-h1b,.th-hero.seen .th-herofoot{opacity:1;transform:none}
