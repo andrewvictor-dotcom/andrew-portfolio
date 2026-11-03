@@ -5818,7 +5818,7 @@ function webPublish(){
   return sbLoad().then(function(sb){
     return sb.auth.getSession().then(function(s){
       var u=s.data&&s.data.session&&s.data.session.user;if(!u||!isOwnerEmail(u.email))throw new Error('auth');
-      return uploadImages(sb).then(function(){return sb.from('site').upsert({id:'main',data:thLockedCopy(state),updated_at:new Date().toISOString()})}).then(function(r){if(r.error)throw r.error});
+      return uploadImages(sb).then(function(){return sb.from('site').upsert({id:'thread',data:thLockedCopy(state),updated_at:new Date().toISOString()})}).then(function(r){if(r.error)throw r.error});
     });
   });
 }
@@ -5890,5 +5890,5 @@ ownerBoot();
 <script>(function(){var S=window.SITE,done=false;
 function go(d){if(done)return;done=true;if(d&&d.profile)document.getElementById('state').textContent=JSON.stringify(d);var a=document.getElementById('app'),s=document.createElement('script');s.text=a.textContent;document.body.appendChild(s)}
 var t=setTimeout(function(){go(null)},1500);
-try{fetch(S.url+'/rest/v1/site?id=eq.main&select=data',{headers:{apikey:S.key,Authorization:'Bearer '+S.key}}).then(function(r){return r.ok?r.json():null}).then(function(j){clearTimeout(t);go(j&&j[0]&&j[0].data)},function(){clearTimeout(t);go(null)})}catch(e){clearTimeout(t);go(null)}})();</script>
+try{fetch(S.url+'/rest/v1/site?id=eq.thread&select=data',{headers:{apikey:S.key,Authorization:'Bearer '+S.key}}).then(function(r){return r.ok?r.json():null}).then(function(j){clearTimeout(t);go(j&&j[0]&&j[0].data)},function(){clearTimeout(t);go(null)})}catch(e){clearTimeout(t);go(null)}})();</script>
 </body></html>

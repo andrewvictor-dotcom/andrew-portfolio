@@ -41,5 +41,8 @@ head=f'''<meta name="description" content="{html.escape(desc)}">
 <meta name="theme-color" content="#121214"><link rel="icon" href="{fav}"><link rel="preconnect" href="https://cegbdtgmhgsngfrstigc.supabase.co" crossorigin>
 '''
 t=re.sub(r'<title>[^<]*</title>','<title>'+html.escape(title)+'</title>\n'+head.replace('\\','\\\\'),t,count=1)
+ROW='thread'
+t=t.replace("site?id=eq.main&","site?id=eq."+ROW+"&").replace("upsert({id:'main',","upsert({id:'"+ROW+"',")
+assert t.count('eq.'+ROW)==1 and t.count("{id:'"+ROW+"'")==1
 open(out,'w').write(t);json.dump(st,open(out+'.content.json','w'),ensure_ascii=False)
 print('web build',round(len(t)/1024),'KB')
