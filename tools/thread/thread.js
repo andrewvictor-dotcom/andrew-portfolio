@@ -104,6 +104,7 @@ function thHome(P,links){
 var G={},TH={segs:[],secs:[],raf:0,intro:document.getElementById('thLoad')?0:1};
 function thBuild(){
   var page=$('#thPage'),svg=$('#thThread');if(!page||!svg)return;thHxMode();
+  thWeavePrep($('.th-hero .th-h1',page),true);$$('.th-pt[data-wv]',page).forEach(function(pt){thWeavePrep($(pt.getAttribute('data-wv'),pt.parentNode),false)});
   var W=page.offsetWidth,H=page.offsetHeight,mob=W<760,pr=page.getBoundingClientRect();
   svg.setAttribute('viewBox','0 0 '+W+' '+H);svg.style.height=H+'px';
   var segs=[[]],secs=[];
@@ -116,6 +117,7 @@ function thBuild(){
       secs.push({top:oy+G.jb[1],h:(y0+h)-(oy+G.jb[1]),seg:segs.length-1,k:0,orbitEnd:true});return}
     secs.push({top:y0,h:h,seg:segs.length-1,k:cur.length,hero:pt.hasAttribute('data-hand')});
     if(pt.hasAttribute('data-hand')){var hp=thHeroPts(s,pr,x0,y0,w,h,mob);if(hp){hp.forEach(function(q){cur.push(q)});return}}
+    if(pt.hasAttribute('data-wv')){var wp=thSecWeave(s,pt,pr,x0,y0,w,h,mob);if(wp){s.classList.add('th-wvs');wp.forEach(function(q){cur.push(q)});return}else s.classList.remove('th-wvs')}
     
     String(pt.getAttribute('data-p')).trim().split(/\s+/).forEach(function(q){var a=q.split(',').map(Number),x=a[0];if(mob)x=.955;cur.push([x0+w*x,y0+h*a[1]])})});
   // build one <path> per stretch
@@ -128,19 +130,62 @@ function thBuild(){
 }
 
 /* hero: the thread enters from the top-left corner of the screen and weaves through the headline — over one word, under the next */
-function thHeroPts(s,pr,x0,y0,w,h,mob){var ws=$$('.th-h1 .w',s);if(!ws.length)return null;
-  var R=ws.map(function(el){var r=el.getBoundingClientRect(),m=new DOMMatrix(getComputedStyle(el).transform);return {l:r.left-pr.left-m.m41,t:r.top-pr.top-m.m42,w:r.width,h:r.height}});
+/* weaving: words alternate over/under the thread; the first O, D or Q in a word is threaded — the line goes behind its left side, through the hole, and over its right side */
+function thWeavePrep(h,hero){if(!h||h.__wv)return;h.__wv=1;
+  if(!hero){var n=0;Array.prototype.slice.call(h.childNodes).forEach(function(nd){if(nd.nodeType!==3)return;var f=document.createDocumentFragment();nd.textContent.split(/(\s+)/).forEach(function(pt){if(!pt)return;if(/^\s+$/.test(pt)){f.appendChild(document.createTextNode(pt));return}var s=document.createElement('span');s.className='w'+(n%2?' u':'');s.textContent=pt;n++;f.appendChild(s)});h.replaceChild(f,nd)})}
+  $$('.w',h).forEach(function(w){var t=w.textContent,m=t.search(/[odq]/i);if(m<0)return;w.classList.remove('u');w.innerHTML=esc(t.slice(0,m))+'<span class="lt" data-c="'+esc(t.charAt(m))+'">'+esc(t.charAt(m))+'</span>'+esc(t.slice(m+1))})}
+function thShift(el,stop){var x=0,y=0;while(el&&el!==stop&&el.nodeType===1){var t=getComputedStyle(el).transform;if(t&&t!=='none'){var m=new DOMMatrix(t);x+=m.m41;y+=m.m42}el=el.parentElement}return {x:x,y:y}}
+function thWords(h,pr){var sec=h.closest('.th-sec')||document.body,hs=thShift(h,sec);return $$('.w',h).map(function(el){var r=el.getBoundingClientRect(),m=new DOMMatrix(getComputedStyle(el).transform),dx=m.m41+hs.x,dy=m.m42+hs.y,o={el:el,l:r.left-pr.left-dx,t:r.top-pr.top-dy,w:r.width,h:r.height},lt=$('.lt',el);
+  if(lt){var q=lt.getBoundingClientRect();o.lt={l:q.left-pr.left-dx,w:q.width}}return o})}
+function thWeave(R,P,o){var lines=[];R.forEach(function(r){var L=lines[lines.length-1];if(!L||Math.abs(r.t-L.t)>r.h*.5){lines.push({t:r.t,h:r.h,ws:[r]})}else L.ws.push(r)});if(!lines.length)return null;
+  var amp=lines[0].h*(o.mob?.07:.09),pad=o.mob?18:46,ex=0,yc=0,ltr=true;
+  lines.forEach(function(L,li){yc=L.t+L.h*.56;var ws=L.ws.slice(),used=false;ltr=(li+(o.flip?1:0))%2===0;if(!ltr)ws.reverse();
+    var a=ws[0],z=ws[ws.length-1],sx=ltr?Math.max(li||o.first?10:24,a.l-pad):a.l+a.w+pad;P.push([sx,yc]);
+    ws.forEach(function(r,k){if(r.lt&&!used){used=true;if(r.el)r.el.classList.remove('u');var c=r.lt.l+r.lt.w/2,d=r.lt.w*.5+4;P.push([c+(ltr?-d:d),yc],[c,yc],[c+(ltr?d:-d),yc]);return}
+      if(r.el)r.el.classList.toggle('u',k%2===1);
+      var f1=ltr?.28:.72,f2=ltr?.72:.28,sg=k%2?1:-1;P.push([r.l+r.w*f1,yc+amp*sg],[r.l+r.w*f2,yc-amp*sg])});
+    ex=ltr?z.l+z.w+pad:Math.max(10,z.l-pad);P.push([ex,yc]);
+    var nx=lines[li+1];if(nx){var ny=nx.t+nx.h*.56,mx=ltr?Math.max(ex,(nx.ws[nx.ws.length-1].l+nx.ws[nx.ws.length-1].w)+pad)+(o.mob?14:60):Math.min(ex,nx.ws[0].l-pad)-(o.mob?14:60);P.push([Math.max(12,Math.min(o.w-12+o.x0,mx)),(yc+ny)/2])}});
+  return {ex:ex,yc:yc,lh:lines[lines.length-1].h,ltr:ltr}}
+/* a curl after the last word: the thread loops round once, tightening, then carries on */
+function thCurl(P,e,o){var R=Math.max(26,e.lh*.42),dir=e.ltr?1:-1,cx=Math.max(o.x0+R+14,Math.min(o.x0+o.w-R-14,e.ex+dir*R*.9)),cy=e.yc+R*.15,a0=Math.atan2(e.yc-cy,e.ex-cx);
+  for(var k=1;k<=9;k++){var a=a0-dir*k*(Math.PI*2*1.15/9),r=R*(1-.22*k/9);P.push([cx+Math.cos(a)*r,cy+Math.sin(a)*r])}}
+/* hero, after the source: the thread drops in from the top left, threads the first O/D of line one with an S-hook,
+   sweeps down-left round the outside of the text, runs along the top of the last line, curls around a letter near
+   its end, then wiggles down like a pen leaving the page */
+function thCharRect(w,idx,pr,dx,dy){var tw=document.createTreeWalker(w,NodeFilter.SHOW_TEXT),n,all=[];while((n=tw.nextNode()))for(var i=0;i<n.length;i++)if(/\S/.test(n.data[i]))all.push([n,i]);if(!all.length)return null;
+  var k=all[Math.max(0,Math.min(all.length-1,idx<0?all.length+idx:idx))],rg=document.createRange();rg.setStart(k[0],k[1]);rg.setEnd(k[0],k[1]+1);var r=rg.getBoundingClientRect();return {l:r.left-pr.left-dx,w:r.width}}
+function thHeroPts(s,pr,x0,y0,w,h,mob){var hh=$('.th-h1',s);if(!hh)return null;var R=thWords(hh,pr);if(!R.length)return null;
   var lines=[];R.forEach(function(r){var L=lines[lines.length-1];if(!L||Math.abs(r.t-L.t)>r.h*.5){lines.push({t:r.t,h:r.h,ws:[r]})}else L.ws.push(r)});
-  var P=[[-30,-30]],amp=lines[0].h*(mob?.07:.09),pad=mob?18:46;
-  lines.forEach(function(L,li){var yc=L.t+L.h*.56,ws=L.ws.slice(),ltr=li%2===0;if(!ltr)ws.reverse();
-    var a=ws[0],z=ws[ws.length-1],sx=ltr?Math.max(li?10:24,a.l-pad):a.l+a.w+pad;P.push([sx,yc]);
-    ws.forEach(function(r,k){var f1=ltr?.28:.72,f2=ltr?.72:.28,sg=k%2?1:-1;P.push([r.l+r.w*f1,yc+amp*sg],[r.l+r.w*f2,yc-amp*sg])});
-    var ex=ltr?z.l+z.w+pad:Math.max(10,z.l-pad);P.push([ex,yc]);
-    var nx=lines[li+1];if(nx){var ny=nx.t+nx.h*.56,mx=ltr?Math.max(ex,(nx.ws[nx.ws.length-1].l+nx.ws[nx.ws.length-1].w)+pad)+(mob?14:60):Math.min(ex,nx.ws[0].l-pad)-(mob?14:60);P.push([Math.max(12,Math.min(w-12+x0,mx)),(yc+ny)/2])}});
-  var last=P[P.length-1],sc=$('.th-scroll',s),b=$('.th-h1b',s);
-  if(b){var rb=b.getBoundingClientRect();P.push([Math.min(last[0],x0+w*.5),rb.top-pr.top+rb.height*.5+(mob?0:10)])}
-  if(sc&&!mob){var rs=sc.getBoundingClientRect();P.push([rs.left-pr.left-24,rs.top-pr.top+rs.height/2],[rs.left-pr.left+rs.width*.5,rs.bottom-pr.top+22])}
+  var L1=lines[0],Ln=lines[lines.length-1],Lg=lines.length>1?lines[lines.length-2]:L1,first=L1.ws[0],y1=L1.t+L1.h*.52,P=[];
+  R.forEach(function(r){if(r.el)r.el.classList.remove('u')});
+  // 1. drop in from the top left
+  
+  // 2. thread the first O/D/Q in line one, then hook back like an S
+  var tw=null;L1.ws.forEach(function(r){if(!tw&&r.lt)tw=r});if(!tw)tw=L1.ws[Math.min(1,L1.ws.length-1)];
+  var lc=tw.lt?tw.lt.l+tw.lt.w/2:tw.l+tw.w*.3,lw=tw.lt?tw.lt.w:tw.w*.2;
+  var s0=[x0+w*(mob?.05:.06),Math.max(y0+70,L1.t-L1.h*1.3)],s2=[lc-lw*.55,y1-L1.h*.18];P.push(s0,[s0[0]+(s2[0]-s0[0])*.22,s0[1]+(s2[1]-s0[1])*.72],s2,[lc,y1],[lc+lw*1.15,y1+L1.h*.02],[lc+lw*2.1,y1-L1.h*.16],[lc+lw*2.25,y1+L1.h*.08],[lc+lw*1.3,y1+L1.h*.32]);
+  // 3. sweep down-left, round the outside of the text
+  var lx=first.l-(mob?14:34),yg=Lg.t+Lg.h*.55,yr=Ln.t+Ln.h*.04;
+  if(lines.length>2)P.push([x0+w*.06+first.l*.2,(y1+yg)/2+L1.h*.2]);
+  P.push([lx,yg],[lx+4,yr-Ln.h*.02],[first.l+Ln.h*.55,yr]);
+  // 4. run along the top of the last line to a letter near its end, curl round it
+  var lw2=Ln.ws[Ln.ws.length-1];if(lw2.el)lw2.el.classList.add('u');var m=new DOMMatrix(getComputedStyle(lw2.el).transform),hs=thShift(hh,s),cr=thCharRect(lw2.el,-2,pr,m.m41+hs.x,m.m42+hs.y)||{l:lw2.l+lw2.w*.7,w:lw2.w*.15};
+  var cx=cr.l+cr.w*.5,cy=Ln.t+Ln.h*.6,Rr=Ln.h*(mob?.42:.5);
+  P.push([cx-Rr*1.5,yr]);
+  for(var k=0;k<=10;k++){var an=-Math.PI*.62+k*(Math.PI*2.12/10),rr=Rr*(1-.08*k/10);P.push([cx+Math.cos(an)*rr*1.08,cy+Math.sin(an)*rr])}
+  // 5. a short wiggle down, like the pen lifting off
+  var b=$('.th-h1b',s),sc=$('.th-scroll',s),rb=b?b.getBoundingClientRect():null,bt=rb?rb.top-pr.top:Ln.t+Ln.h+80,sx=P[P.length-1][0],yb=P[P.length-1][1],room=Math.max(24,bt-yb-14),q=room/4;
+  P.push([sx-6,yb+q],[sx+6,yb+q*2],[sx-5,yb+q*3],[sx+3,yb+room]);
+  // then round the sentence below, not through it
+  var rx=rb?Math.min(x0+w*(mob?.955:.92),rb.right-pr.left+(mob?10:60)):x0+w*.8;P.push([rx,yb+room+8],[rx,rb?rb.bottom-pr.top:yb+room+40]);
+  if(sc&&!mob){var rs=sc.getBoundingClientRect();P.push([rs.left-pr.left+rs.width*.5,rs.top-pr.top-30],[rs.left-pr.left+rs.width*.5,rs.bottom-pr.top+22])}
   P.push([x0+w*(mob?.955:.82),y0+h]);return P}
+/* sections with a woven heading: enter where the thread arrives, weave the heading, curl, then follow the section's own points below it */
+function thSecWeave(s,pt,pr,x0,y0,w,h,mob){if(mob)return null;var hh=$(pt.getAttribute('data-wv'),s);if(!hh)return null;var R=thWords(hh,pr);if(!R.length)return null;
+  var pts=String(pt.getAttribute('data-p')).trim().split(/\s+/).map(function(q){var a=q.split(',').map(Number);return [x0+w*a[0],y0+h*a[1]]});
+  var hr=hh.getBoundingClientRect(),hb=hr.bottom-pr.top-thShift(hh,s).y+30,P=[pts[0]],e=thWeave(R,P,{mob:false,w:w,x0:x0,first:true,flip:pts[0][0]>x0+w*.4});if(!e)return null;
+  thCurl(P,e,{w:w,x0:x0});var post=pts.filter(function(q){return q[1]>hb+40});if(!post.length)post=[pts[pts.length-1]];return P.concat(post)}
 /* lengths measured from the curve maths, not from the browser (getPointAtLength on a long path is very slow) */
 function thMeasure(P){var ptL=[0],S=[[0,P[0][0],P[0][1]]],L=0;
   for(var i=0;i<P.length-1;i++){var p0=P[i-1]||P[i],p1=P[i],p2=P[i+1],p3=P[i+2]||p2,t=.5,
@@ -276,6 +321,8 @@ function thSmooth(el){if(RM||!FINE||el.__sm)return;el.__sm=1;var win=el===window
     if(win&&t.closest&&t.closest('#cs,.zz,.zz-panel,#agentRoot,textarea,[data-native-scroll],.bk,.drawer,#lb'))return;
     if(!win&&t.closest&&t.closest('textarea,.zz,#agentRoot'))return;
     var d=e.deltaY*(e.deltaMode===1?32:e.deltaMode===2?innerHeight:1);if(!raf)cur=tgt=pos();tgt=Math.max(0,Math.min(max(),tgt+d));e.preventDefault();if(!raf)raf=requestAnimationFrame(step)},{passive:false})}
+function thHumanSig(svg){if(!svg||svg.__hs)return;svg.__hs=1;var s=11,R=function(){s=(s*16807)%2147483647;return (s-1)/2147483646},t=0;
+  $$('path',svg).forEach(function(p,i){var L=parseFloat(p.style.getPropertyValue('--l'))||p.getTotalLength(),v=230*(.8+R()*.45),du=Math.max(.06,L/v);if(i)t+=.03+R()*.09;p.style.setProperty('--dl',t.toFixed(3)+'s');p.style.setProperty('--du',du.toFixed(3)+'s');t+=du})}
 function thWire(){var page=$('#thPage');if(!page)return;
   $$('[data-case]',page).forEach(function(b){b.onclick=function(e){openCase(b.getAttribute('data-case'),e.clientX,e.clientY)}});
   $$('.th-proj',page).forEach(function(s){s.onclick=function(e){if(e.target.closest('a,[data-case]'))return;openCase(s.getAttribute('data-proj'),e.clientX,e.clientY)}});
