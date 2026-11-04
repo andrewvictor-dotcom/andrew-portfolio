@@ -61,7 +61,7 @@ function thHome(P,links){
   h+='<section class="th-sec th-hero" data-mode="dark" id="top"><div class="th-w"><h1 class="th-h1">'+(function(){var n=0;return hA.split(' ').map(function(w){return w.replace(/-/g,'-\n').split('\n').map(function(pc){var i=n++;return '<span class="w'+(i%2?' u':'')+'" style="--i:'+i+'">'+esc(pc)+'</span>'}).join('')}).join(' ')})()+'</h1><p class="th-h1b">'+esc(hB.charAt(0).toUpperCase()+hB.slice(1))+'</p>'+
      '<div class="th-herofoot"><p class="th-mono">'+esc(P.lede)+'</p><a class="th-mono th-scroll" href="#work">Scroll to follow the thread <span>↓</span></a></div>'+(function(){var c=["Al Baraka", "NatGas", "Survv", "Americana", "Jumia", "Shell"],one=c.map(function(n){return '<span>'+esc(n)+'</span>'}).join('');return '<div class="th-clients" aria-label="WideBot clients using products I designed"><p class="th-cl-k">Trusted by 300+<br>organizations<small class="th-mono">WideBot clients</small></p><div class="th-cl-row"><div class="th-cl-tr" aria-hidden="false">'+one+'</div><div class="th-cl-tr" aria-hidden="true">'+one+'</div></div></div>'})()+'</div><span class="th-pt" data-hand="1" data-p=".05,.07 .14,.20 .28,.30 .34,.36 .22,.47 .03,.58 .06,.66 .35,.67 .70,.67 .76,.71 .74,.79 .66,.81 .63,.76 .70,.73 .68,.86 .70,.92 .82,1"></span><a id="seeWork" href="#work" hidden></a><div id="bot" hidden></div></section>';
   // belief
-  h+='<section class="th-sec th-belief" data-mode="paper"><div class="th-w th-bel"><div><h2 class="th-h2">I start every<br>design with<br>real users.</h2><ul class="th-steps"><li>Research</li><li>Product design</li><li>Development</li></ul><p class="th-mono th-belief-p">'+esc('From the first interview to the shipped product.')+'</p></div><div class="th-notew" data-note><svg class="th-note" viewBox="0 0 520 380" aria-hidden="true"><path class="nb" d="M260 60 C200 40 110 40 40 62 V330 C110 308 200 308 260 330 Z"/><path class="nb" d="M260 60 C320 40 410 40 480 62 V330 C410 308 320 308 260 330 Z"/><path class="nb" d="M260 60 V330"/><path class="hw" d="M70 92 C95 88 120 92 150 88"/><path class="hw" d="M70 122 C110 118 160 122 225 116"/><path class="hw" d="M70 146 C120 142 170 146 220 141"/><path class="hw" d="M70 170 C110 166 150 170 190 166"/><path class="hw" d="M70 206 C110 202 170 206 222 200"/><path class="hw" d="M70 230 C100 226 140 230 175 226"/><path class="mk" d="M58 116 l6 6 l10 -12"/><path class="mk" d="M58 200 l6 6 l10 -12"/><rect class="st" x="290" y="86" width="64" height="52" rx="3"/><rect class="st" x="368" y="80" width="64" height="52" rx="3"/><rect class="st" x="300" y="152" width="64" height="52" rx="3"/><path class="hw" d="M300 104 h40 M300 116 h30"/><path class="hw" d="M378 98 h40 M378 110 h26"/><path class="hw" d="M310 170 h40 M310 182 h22"/><path class="ci" d="M360 240 C330 236 300 252 306 274 C312 296 368 300 400 286 C430 272 420 244 388 238 C372 235 360 238 352 244"/><path class="hw" d="M326 266 h60"/><path class="ar" d="M396 186 C420 200 420 222 404 238 M404 238 l2 -12 M404 238 l-12 -2"/><g class="pen"><path class="nb" d="M470 120 L500 104 L512 126 L482 142 Z"/><path class="nb" d="M482 142 L414 280 L400 296 L404 274 L470 120"/><path class="nb" d="M400 296 l4 -22"/></g><text x="70" y="290" class="lb">Interview 07 · Workspace</text></svg></div></div><span class="th-pt" data-p=".97,0 .97,.14 .93,.22 .97,.30 .97,1"></span></section>';
+  h+='<section class="th-sec th-belief" data-mode="paper"><div class="th-w th-bel"><div><h2 class="th-h2">I start every<br>design with<br>real users.</h2><ul class="th-steps"><li>Research</li><li>Product design</li><li>Development</li></ul><p class="th-mono th-belief-p">'+esc('From the first interview to the shipped product.')+'</p></div><div class="th-notew" data-note><svg class="th-note" viewBox="0 0 520 380" aria-hidden="true"><path class="nb" d="M260 60 C200 40 110 40 40 62 V330 C110 308 200 308 260 330 Z"/><path class="nb" d="M260 60 C320 40 410 40 480 62 V330 C410 308 320 308 260 330 Z"/><path class="nb" d="M260 60 V330"/><path class="hw" d="M70 92 C95 88 120 92 150 88"/><path class="hw" d="M70 122 C110 118 160 122 225 116"/><path class="hw" d="M70 146 C120 142 170 146 220 141"/><path class="hw" d="M70 170 C110 166 150 170 190 166"/><path class="hw" d="M70 206 C110 202 170 206 222 200"/><path class="hw" d="M70 230 C100 226 140 230 175 226"/><path class="mk" d="M58 116 l6 6 l10 -12"/><path class="mk" d="M58 200 l6 6 l10 -12"/><rect class="st" x="290" y="86" width="64" height="52" rx="3"/><rect class="st" x="368" y="80" width="64" height="52" rx="3"/><rect class="st" x="300" y="152" width="64" height="52" rx="3"/><path class="hw" d="M300 104 h40 M300 116 h30"/><path class="hw" d="M378 98 h40 M378 110 h26"/><path class="hw" d="M310 170 h40 M310 182 h22"/><path class="ci" d="M360 240 C330 236 300 252 306 274 C312 296 368 300 400 286 C430 272 420 244 388 238 C372 235 360 238 352 244"/><path class="hw" d="M326 266 h60"/><path class="ar" d="M396 186 C420 200 420 222 404 238 M404 238 l2 -12 M404 238 l-12 -2"/><g class="pen"><path class="nb" d="M470 120 L500 104 L512 126 L482 142 Z"/><path class="nb" d="M482 142 L414 280 L400 296 L404 274 L470 120"/><path class="nb" d="M400 296 l4 -22"/></g><text x="70" y="290" class="lb">Interview 07 · Workspace</text></svg></div></div><span class="th-pt" data-wv=".th-h2" data-p=".97,0 .97,.14 .93,.22 .97,.30 .97,1"></span></section>';
   // skills orbit
   var SK=thSkillGroups(state.skills||[]);
   h+='<section class="th-sec th-skills" data-mode="dark" aria-labelledby="thSkH"><div class="th-w"><h2 class="th-h2 th-drift" id="thSkH"><span class="ln">What I bring</span><span class="ln" data-dir="-1">to every</span><span class="ln acc">product team.</span></h2>'+
@@ -84,7 +84,7 @@ function thHome(P,links){
   h+='<section class="th-sec th-resume" data-mode="paper" id="resume"><div class="th-w"><p class="th-mono th-k">Resume</p><ol class="th-jobs">'+(state.experience||[]).map(function(j){return '<li><span class="th-mono">'+esc(j.period)+'</span><div><h3>'+esc(j.role)+'</h3><p class="at">'+esc(j.company)+(j.meta?' · '+esc(j.meta):'')+'</p><ul>'+(j.points||[]).map(function(x){return '<li>'+numHi(x)+'</li>'}).join('')+'</ul></div></li>'}).join('')+'</ol>'+
      '<div class="th-facts"><div><span class="th-mono">Education</span><p>'+esc(state.education.school)+' · '+esc(state.education.degree)+'</p></div><div><span class="th-mono">Languages</span><p>'+(state.languages||[]).map(esc).join(' · ')+'</p></div>'+(state.agent.enabled?'<div><button type="button" class="th-explore" data-zz-fit>Check fit for your role <span>↗</span></button></div>':'')+'</div></div><span class="th-pt" data-p=".06,0 .06,.9 .5,1"></span></section>';
   // ai
-  if(W.enabled){h+='<section class="th-sec th-ai" data-mode="paper" id="ai"><div class="th-w"><p class="th-mono th-k">How I work with AI</p><h2 class="th-h2 sm">'+esc(W.title)+'</h2><p class="th-lead">'+esc(W.intro)+'</p><div class="th-cols">'+[[W.useTitle,W.use],[W.keepTitle,W.keep],[W.buildTitle,W.build]].filter(function(c){return c[0]}).map(function(c,k){return '<div><h3><i>'+String(k+1).padStart(2,'0')+'</i>'+esc(c[0])+'</h3><ul>'+(c[1]||[]).map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div>'}).join('')+'</div></div><span class="th-pt" data-p=".5,0 .5,.22 .17,.42 .5,.42 .83,.42 .5,.62 .5,1"></span></section>'}
+  if(W.enabled){h+='<section class="th-sec th-ai" data-mode="paper" id="ai"><div class="th-w"><p class="th-mono th-k">How I work with AI</p><h2 class="th-h2 sm">'+esc(W.title)+'</h2><p class="th-lead">'+esc(W.intro)+'</p><div class="th-cols">'+[[W.useTitle,W.use],[W.keepTitle,W.keep],[W.buildTitle,W.build]].filter(function(c){return c[0]}).map(function(c,k){return '<div><h3><i>'+String(k+1).padStart(2,'0')+'</i>'+esc(c[0])+'</h3><ul>'+(c[1]||[]).map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div>'}).join('')+'</div></div><span class="th-pt" data-wv=".th-h2" data-p=".5,0 .5,.22 .17,.42 .5,.42 .83,.42 .5,.62 .5,1"></span></section>'}
   // testimonials stack
   var T=state.testimonials||[];
   if(T.length){var nbH=function(t,i){return '<div class="kn-who"><p class="th-mono kn-k">Note '+String(i+1).padStart(2,'0')+' / '+String(T.length).padStart(2,'0')+'</p><span class="kn-av">'+(t.photo?'<img src="'+esc(t.photo)+'" alt="">':'<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M52 6C78 5 95 24 94 50C93 76 74 95 49 94C23 93 6 75 7 49C8 24 26 7 55 8"/></svg><b>'+esc(initials(t.name))+'</b>')+'</span><h3 class="kn-name">'+esc(t.name)+'</h3><p class="kn-role th-mono">'+esc(t.role)+'</p><p class="kn-from">wrote this about working with Andrew →</p></div>'};
@@ -96,7 +96,7 @@ function thHome(P,links){
     '<i class="kn-spine" aria-hidden="true"></i></div><p class="kn-count th-mono" aria-hidden="true"><b>01</b> / '+String(T.length).padStart(2,'0')+'</p></div><span class="th-pt" data-p=".04,0 .04,1"></span></section>'}
   // about
   h+='<section class="th-sec th-about" data-mode="dark" id="about"><div class="th-w"><div class="th-ab"><div><h2 class="th-h2">'+esc(A.title)+'.</h2><p class="th-lead">'+esc(A.body)+'</p>'+(A.ahead?'<p class="th-mono">'+esc(A.ahead)+'</p>':'')+'</div>'+(P.photo?'<figure class="th-pt-ph"><img src="'+esc(P.photo)+'" alt="Portrait of '+esc(P.name)+'"><figcaption class="th-mono">'+esc(P.location)+'</figcaption></figure>':'')+'</div>'+
-     '<div class="th-sign"><h2 class="th-name">'+esc(P.name)+'.</h2>'+thSig('th-sig2')+'<p class="th-mono">'+esc(P.role)+' · '+esc(P.status)+'</p></div></div><span class="th-pt" data-p=".5,0 .9,.2 .93,.6 .80,.9 .78,1"></span></section>';
+     '<div class="th-sign"><h2 class="th-name">'+esc(P.name)+'.</h2>'+thSig('th-sig2')+'<p class="th-mono">'+esc(P.role)+' · '+esc(P.status)+'</p></div></div><span class="th-pt" data-wv=".th-h2" data-p=".5,0 .9,.2 .93,.6 .80,.9 .78,1"></span></section>';
   h+='</div>';
   return h;
 }
@@ -104,6 +104,7 @@ function thHome(P,links){
 var G={},TH={segs:[],secs:[],raf:0,intro:document.getElementById('thLoad')?0:1};
 function thBuild(){
   var page=$('#thPage'),svg=$('#thThread');if(!page||!svg)return;thHxMode();
+  thWeavePrep($('.th-hero .th-h1',page),true);$$('.th-pt[data-wv]',page).forEach(function(pt){thWeavePrep($(pt.getAttribute('data-wv'),pt.parentNode),false)});
   var W=page.offsetWidth,H=page.offsetHeight,mob=W<760,pr=page.getBoundingClientRect();
   svg.setAttribute('viewBox','0 0 '+W+' '+H);svg.style.height=H+'px';
   var segs=[[]],secs=[];
@@ -116,6 +117,7 @@ function thBuild(){
       secs.push({top:oy+G.jb[1],h:(y0+h)-(oy+G.jb[1]),seg:segs.length-1,k:0,orbitEnd:true});return}
     secs.push({top:y0,h:h,seg:segs.length-1,k:cur.length,hero:pt.hasAttribute('data-hand')});
     if(pt.hasAttribute('data-hand')){var hp=thHeroPts(s,pr,x0,y0,w,h,mob);if(hp){hp.forEach(function(q){cur.push(q)});return}}
+    if(pt.hasAttribute('data-wv')){var wp=thSecWeave(s,pt,pr,x0,y0,w,h,mob);if(wp){s.classList.add('th-wvs');wp.forEach(function(q){cur.push(q)});return}else s.classList.remove('th-wvs')}
     
     String(pt.getAttribute('data-p')).trim().split(/\s+/).forEach(function(q){var a=q.split(',').map(Number),x=a[0];if(mob)x=.955;cur.push([x0+w*x,y0+h*a[1]])})});
   // build one <path> per stretch
@@ -128,19 +130,37 @@ function thBuild(){
 }
 
 /* hero: the thread enters from the top-left corner of the screen and weaves through the headline — over one word, under the next */
-function thHeroPts(s,pr,x0,y0,w,h,mob){var ws=$$('.th-h1 .w',s);if(!ws.length)return null;
-  var R=ws.map(function(el){var r=el.getBoundingClientRect(),m=new DOMMatrix(getComputedStyle(el).transform);return {l:r.left-pr.left-m.m41,t:r.top-pr.top-m.m42,w:r.width,h:r.height}});
-  var lines=[];R.forEach(function(r){var L=lines[lines.length-1];if(!L||Math.abs(r.t-L.t)>r.h*.5){lines.push({t:r.t,h:r.h,ws:[r]})}else L.ws.push(r)});
-  var P=[[-30,-30]],amp=lines[0].h*(mob?.07:.09),pad=mob?18:46;
-  lines.forEach(function(L,li){var yc=L.t+L.h*.56,ws=L.ws.slice(),ltr=li%2===0;if(!ltr)ws.reverse();
-    var a=ws[0],z=ws[ws.length-1],sx=ltr?Math.max(li?10:24,a.l-pad):a.l+a.w+pad;P.push([sx,yc]);
-    ws.forEach(function(r,k){var f1=ltr?.28:.72,f2=ltr?.72:.28,sg=k%2?1:-1;P.push([r.l+r.w*f1,yc+amp*sg],[r.l+r.w*f2,yc-amp*sg])});
-    var ex=ltr?z.l+z.w+pad:Math.max(10,z.l-pad);P.push([ex,yc]);
-    var nx=lines[li+1];if(nx){var ny=nx.t+nx.h*.56,mx=ltr?Math.max(ex,(nx.ws[nx.ws.length-1].l+nx.ws[nx.ws.length-1].w)+pad)+(mob?14:60):Math.min(ex,nx.ws[0].l-pad)-(mob?14:60);P.push([Math.max(12,Math.min(w-12+x0,mx)),(yc+ny)/2])}});
+/* weaving: words alternate over/under the thread; the first O, D or Q in a word is threaded — the line goes behind its left side, through the hole, and over its right side */
+function thWeavePrep(h,hero){if(!h||h.__wv)return;h.__wv=1;
+  if(!hero){var n=0;Array.prototype.slice.call(h.childNodes).forEach(function(nd){if(nd.nodeType!==3)return;var f=document.createDocumentFragment();nd.textContent.split(/(\s+)/).forEach(function(pt){if(!pt)return;if(/^\s+$/.test(pt)){f.appendChild(document.createTextNode(pt));return}var s=document.createElement('span');s.className='w'+(n%2?' u':'');s.textContent=pt;n++;f.appendChild(s)});h.replaceChild(f,nd)})}
+  $$('.w',h).forEach(function(w){var t=w.textContent,m=t.search(/[odq]/i);if(m<0)return;w.classList.remove('u');w.innerHTML=esc(t.slice(0,m))+'<span class="lt" data-c="'+esc(t.charAt(m))+'">'+esc(t.charAt(m))+'</span>'+esc(t.slice(m+1))})}
+function thShift(el,stop){var x=0,y=0;while(el&&el!==stop&&el.nodeType===1){var t=getComputedStyle(el).transform;if(t&&t!=='none'){var m=new DOMMatrix(t);x+=m.m41;y+=m.m42}el=el.parentElement}return {x:x,y:y}}
+function thWords(h,pr){var sec=h.closest('.th-sec')||document.body,hs=thShift(h,sec);return $$('.w',h).map(function(el){var r=el.getBoundingClientRect(),m=new DOMMatrix(getComputedStyle(el).transform),dx=m.m41+hs.x,dy=m.m42+hs.y,o={el:el,l:r.left-pr.left-dx,t:r.top-pr.top-dy,w:r.width,h:r.height},lt=$('.lt',el);
+  if(lt){var q=lt.getBoundingClientRect();o.lt={l:q.left-pr.left-dx,w:q.width}}return o})}
+function thWeave(R,P,o){var lines=[];R.forEach(function(r){var L=lines[lines.length-1];if(!L||Math.abs(r.t-L.t)>r.h*.5){lines.push({t:r.t,h:r.h,ws:[r]})}else L.ws.push(r)});if(!lines.length)return null;
+  var amp=lines[0].h*(o.mob?.07:.09),pad=o.mob?18:46,ex=0,yc=0,ltr=true;
+  lines.forEach(function(L,li){yc=L.t+L.h*.56;var ws=L.ws.slice(),used=false;ltr=(li+(o.flip?1:0))%2===0;if(!ltr)ws.reverse();
+    var a=ws[0],z=ws[ws.length-1],sx=ltr?Math.max(li||o.first?10:24,a.l-pad):a.l+a.w+pad;P.push([sx,yc]);
+    ws.forEach(function(r,k){if(r.lt&&!used){used=true;if(r.el)r.el.classList.remove('u');var c=r.lt.l+r.lt.w/2,d=r.lt.w*.5+4;P.push([c+(ltr?-d:d),yc],[c,yc],[c+(ltr?d:-d),yc]);return}
+      if(r.el)r.el.classList.toggle('u',k%2===1);
+      var f1=ltr?.28:.72,f2=ltr?.72:.28,sg=k%2?1:-1;P.push([r.l+r.w*f1,yc+amp*sg],[r.l+r.w*f2,yc-amp*sg])});
+    ex=ltr?z.l+z.w+pad:Math.max(10,z.l-pad);P.push([ex,yc]);
+    var nx=lines[li+1];if(nx){var ny=nx.t+nx.h*.56,mx=ltr?Math.max(ex,(nx.ws[nx.ws.length-1].l+nx.ws[nx.ws.length-1].w)+pad)+(o.mob?14:60):Math.min(ex,nx.ws[0].l-pad)-(o.mob?14:60);P.push([Math.max(12,Math.min(o.w-12+o.x0,mx)),(yc+ny)/2])}});
+  return {ex:ex,yc:yc,lh:lines[lines.length-1].h,ltr:ltr}}
+/* a curl after the last word: the thread loops round once, tightening, then carries on */
+function thCurl(P,e,o){var R=Math.max(26,e.lh*.42),dir=e.ltr?1:-1,cx=Math.max(o.x0+R+14,Math.min(o.x0+o.w-R-14,e.ex+dir*R*.9)),cy=e.yc+R*.15,a0=Math.atan2(e.yc-cy,e.ex-cx);
+  for(var k=1;k<=9;k++){var a=a0-dir*k*(Math.PI*2*1.15/9),r=R*(1-.22*k/9);P.push([cx+Math.cos(a)*r,cy+Math.sin(a)*r])}}
+function thHeroPts(s,pr,x0,y0,w,h,mob){var hh=$('.th-h1',s);if(!hh)return null;var R=thWords(hh,pr);if(!R.length)return null;
+  var P=[[-30,-30]],e=thWeave(R,P,{mob:mob,w:w,x0:x0});if(!e)return null;
   var last=P[P.length-1],sc=$('.th-scroll',s),b=$('.th-h1b',s);
   if(b){var rb=b.getBoundingClientRect();P.push([Math.min(last[0],x0+w*.5),rb.top-pr.top+rb.height*.5+(mob?0:10)])}
   if(sc&&!mob){var rs=sc.getBoundingClientRect();P.push([rs.left-pr.left-24,rs.top-pr.top+rs.height/2],[rs.left-pr.left+rs.width*.5,rs.bottom-pr.top+22])}
   P.push([x0+w*(mob?.955:.82),y0+h]);return P}
+/* sections with a woven heading: enter where the thread arrives, weave the heading, curl, then follow the section's own points below it */
+function thSecWeave(s,pt,pr,x0,y0,w,h,mob){if(mob)return null;var hh=$(pt.getAttribute('data-wv'),s);if(!hh)return null;var R=thWords(hh,pr);if(!R.length)return null;
+  var pts=String(pt.getAttribute('data-p')).trim().split(/\s+/).map(function(q){var a=q.split(',').map(Number);return [x0+w*a[0],y0+h*a[1]]});
+  var hr=hh.getBoundingClientRect(),hb=hr.bottom-pr.top-thShift(hh,s).y+30,P=[pts[0]],e=thWeave(R,P,{mob:false,w:w,x0:x0,first:true,flip:pts[0][0]>x0+w*.4});if(!e)return null;
+  thCurl(P,e,{w:w,x0:x0});var post=pts.filter(function(q){return q[1]>hb+40});if(!post.length)post=[pts[pts.length-1]];return P.concat(post)}
 /* lengths measured from the curve maths, not from the browser (getPointAtLength on a long path is very slow) */
 function thMeasure(P){var ptL=[0],S=[[0,P[0][0],P[0][1]]],L=0;
   for(var i=0;i<P.length-1;i++){var p0=P[i-1]||P[i],p1=P[i],p2=P[i+1],p3=P[i+2]||p2,t=.5,
@@ -276,7 +296,9 @@ function thSmooth(el){if(RM||!FINE||el.__sm)return;el.__sm=1;var win=el===window
     if(win&&t.closest&&t.closest('#cs,.zz,.zz-panel,#agentRoot,textarea,[data-native-scroll],.bk,.drawer,#lb'))return;
     if(!win&&t.closest&&t.closest('textarea,.zz,#agentRoot'))return;
     var d=e.deltaY*(e.deltaMode===1?32:e.deltaMode===2?innerHeight:1);if(!raf)cur=tgt=pos();tgt=Math.max(0,Math.min(max(),tgt+d));e.preventDefault();if(!raf)raf=requestAnimationFrame(step)},{passive:false})}
-function thWire(){var page=$('#thPage');if(!page)return;
+function thHumanSig(svg){if(!svg||svg.__hs)return;svg.__hs=1;var s=11,R=function(){s=(s*16807)%2147483647;return (s-1)/2147483646},t=0;
+  $$('path',svg).forEach(function(p,i){var L=parseFloat(p.style.getPropertyValue('--l'))||p.getTotalLength(),v=230*(.8+R()*.45),du=Math.max(.06,L/v);if(i)t+=.03+R()*.09;p.style.setProperty('--dl',t.toFixed(3)+'s');p.style.setProperty('--du',du.toFixed(3)+'s');t+=du})}
+function thWire(){var page=$('#thPage');if(!page)return;$$('.th-sig2',page).forEach(thHumanSig);
   $$('[data-case]',page).forEach(function(b){b.onclick=function(e){openCase(b.getAttribute('data-case'),e.clientX,e.clientY)}});
   $$('.th-proj',page).forEach(function(s){s.onclick=function(e){if(e.target.closest('a,[data-case]'))return;openCase(s.getAttribute('data-proj'),e.clientX,e.clientY)}});
   if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(en){en.target.classList.toggle('on',en.isIntersecting);if(en.isIntersecting)en.target.classList.add('seen')})},{threshold:.35});$$('[data-thv],[data-note],.th-oval,.th-steps,.th-cols,.th-sign,.th-hero',page).forEach(function(x){io.observe(x)})}

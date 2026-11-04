@@ -698,3 +698,11 @@ html[data-hdr=paper] .nav{--hbg:#EFEBE3}
   .nav .nav-ask{font-size:0!important;gap:0!important}.nav .nav-ask kbd{display:none}
 }
 @media (max-width:860px) and (min-width:561px){.nav-links{display:none!important}}
+
+/* woven headings: words alternate over/under the thread; O, D and Q are threaded through */
+.th-wvs{z-index:auto!important}.th-wvs .th-w,.th-wvs .th-bel,.th-wvs .th-bel>div{z-index:auto!important}
+.th-wvs .th-h2 .w.u{position:relative;z-index:6}
+.th-h2 .w{display:inline-block;white-space:nowrap}.th-h1 .lt,.th-h2 .lt{position:relative;display:inline-block}
+.th-hero .th-h1 .lt::after,.th-wvs .th-h2 .lt::after{content:attr(data-c);position:absolute;inset:0;line-height:inherit;z-index:6;clip-path:inset(-30% -30% -30% 50%);pointer-events:none}
+/* About signature: each stroke eases in and out like a pen */
+.th-sign.on .th-sig2 path{animation-timing-function:cubic-bezier(.42,.08,.36,1)!important}
