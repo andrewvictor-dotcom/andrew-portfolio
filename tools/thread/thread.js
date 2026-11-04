@@ -150,11 +150,36 @@ function thWeave(R,P,o){var lines=[];R.forEach(function(r){var L=lines[lines.len
 /* a curl after the last word: the thread loops round once, tightening, then carries on */
 function thCurl(P,e,o){var R=Math.max(26,e.lh*.42),dir=e.ltr?1:-1,cx=Math.max(o.x0+R+14,Math.min(o.x0+o.w-R-14,e.ex+dir*R*.9)),cy=e.yc+R*.15,a0=Math.atan2(e.yc-cy,e.ex-cx);
   for(var k=1;k<=9;k++){var a=a0-dir*k*(Math.PI*2*1.15/9),r=R*(1-.22*k/9);P.push([cx+Math.cos(a)*r,cy+Math.sin(a)*r])}}
+/* hero, after the source: the thread drops in from the top left, threads the first O/D of line one with an S-hook,
+   sweeps down-left round the outside of the text, runs along the top of the last line, curls around a letter near
+   its end, then wiggles down like a pen leaving the page */
+function thCharRect(w,idx,pr,dx,dy){var tw=document.createTreeWalker(w,NodeFilter.SHOW_TEXT),n,all=[];while((n=tw.nextNode()))for(var i=0;i<n.length;i++)if(/\S/.test(n.data[i]))all.push([n,i]);if(!all.length)return null;
+  var k=all[Math.max(0,Math.min(all.length-1,idx<0?all.length+idx:idx))],rg=document.createRange();rg.setStart(k[0],k[1]);rg.setEnd(k[0],k[1]+1);var r=rg.getBoundingClientRect();return {l:r.left-pr.left-dx,w:r.width}}
 function thHeroPts(s,pr,x0,y0,w,h,mob){var hh=$('.th-h1',s);if(!hh)return null;var R=thWords(hh,pr);if(!R.length)return null;
-  var P=[[-30,-30]],e=thWeave(R,P,{mob:mob,w:w,x0:x0});if(!e)return null;
-  var last=P[P.length-1],sc=$('.th-scroll',s),b=$('.th-h1b',s);
-  if(b){var rb=b.getBoundingClientRect();P.push([Math.min(last[0],x0+w*.5),rb.top-pr.top+rb.height*.5+(mob?0:10)])}
-  if(sc&&!mob){var rs=sc.getBoundingClientRect();P.push([rs.left-pr.left-24,rs.top-pr.top+rs.height/2],[rs.left-pr.left+rs.width*.5,rs.bottom-pr.top+22])}
+  var lines=[];R.forEach(function(r){var L=lines[lines.length-1];if(!L||Math.abs(r.t-L.t)>r.h*.5){lines.push({t:r.t,h:r.h,ws:[r]})}else L.ws.push(r)});
+  var L1=lines[0],Ln=lines[lines.length-1],Lg=lines.length>1?lines[lines.length-2]:L1,first=L1.ws[0],y1=L1.t+L1.h*.52,P=[];
+  R.forEach(function(r){if(r.el)r.el.classList.remove('u')});
+  // 1. drop in from the top left
+  
+  // 2. thread the first O/D/Q in line one, then hook back like an S
+  var tw=null;L1.ws.forEach(function(r){if(!tw&&r.lt)tw=r});if(!tw)tw=L1.ws[Math.min(1,L1.ws.length-1)];
+  var lc=tw.lt?tw.lt.l+tw.lt.w/2:tw.l+tw.w*.3,lw=tw.lt?tw.lt.w:tw.w*.2;
+  var s0=[x0+w*(mob?.05:.06),Math.max(y0+70,L1.t-L1.h*1.3)],s2=[lc-lw*.55,y1-L1.h*.18];P.push(s0,[s0[0]+(s2[0]-s0[0])*.22,s0[1]+(s2[1]-s0[1])*.72],s2,[lc,y1],[lc+lw*1.15,y1+L1.h*.02],[lc+lw*2.1,y1-L1.h*.16],[lc+lw*2.25,y1+L1.h*.08],[lc+lw*1.3,y1+L1.h*.32]);
+  // 3. sweep down-left, round the outside of the text
+  var lx=first.l-(mob?14:34),yg=Lg.t+Lg.h*.55,yr=Ln.t+Ln.h*.04;
+  if(lines.length>2)P.push([x0+w*.06+first.l*.2,(y1+yg)/2+L1.h*.2]);
+  P.push([lx,yg],[lx+4,yr-Ln.h*.02],[first.l+Ln.h*.55,yr]);
+  // 4. run along the top of the last line to a letter near its end, curl round it
+  var lw2=Ln.ws[Ln.ws.length-1];if(lw2.el)lw2.el.classList.add('u');var m=new DOMMatrix(getComputedStyle(lw2.el).transform),hs=thShift(hh,s),cr=thCharRect(lw2.el,-2,pr,m.m41+hs.x,m.m42+hs.y)||{l:lw2.l+lw2.w*.7,w:lw2.w*.15};
+  var cx=cr.l+cr.w*.5,cy=Ln.t+Ln.h*.6,Rr=Ln.h*(mob?.42:.5);
+  P.push([cx-Rr*1.5,yr]);
+  for(var k=0;k<=10;k++){var an=-Math.PI*.62+k*(Math.PI*2.12/10),rr=Rr*(1-.08*k/10);P.push([cx+Math.cos(an)*rr*1.08,cy+Math.sin(an)*rr])}
+  // 5. a short wiggle down, like the pen lifting off
+  var b=$('.th-h1b',s),sc=$('.th-scroll',s),rb=b?b.getBoundingClientRect():null,bt=rb?rb.top-pr.top:Ln.t+Ln.h+80,sx=P[P.length-1][0],yb=P[P.length-1][1],room=Math.max(24,bt-yb-14),q=room/4;
+  P.push([sx-6,yb+q],[sx+6,yb+q*2],[sx-5,yb+q*3],[sx+3,yb+room]);
+  // then round the sentence below, not through it
+  var rx=rb?Math.min(x0+w*(mob?.955:.92),rb.right-pr.left+(mob?10:60)):x0+w*.8;P.push([rx,yb+room+8],[rx,rb?rb.bottom-pr.top:yb+room+40]);
+  if(sc&&!mob){var rs=sc.getBoundingClientRect();P.push([rs.left-pr.left+rs.width*.5,rs.top-pr.top-30],[rs.left-pr.left+rs.width*.5,rs.bottom-pr.top+22])}
   P.push([x0+w*(mob?.955:.82),y0+h]);return P}
 /* sections with a woven heading: enter where the thread arrives, weave the heading, curl, then follow the section's own points below it */
 function thSecWeave(s,pt,pr,x0,y0,w,h,mob){if(mob)return null;var hh=$(pt.getAttribute('data-wv'),s);if(!hh)return null;var R=thWords(hh,pr);if(!R.length)return null;
