@@ -228,7 +228,10 @@ function thOrbitLayout(mob){var ov=$('#thOrbit'),svg=$('.th-orb-svg',ov),w=ov.of
 function thOrbitNodes(){var ov=$('#thOrbit'),svg=$('.th-orb-svg',ov),orb=ov.getBoundingClientRect();
   ['l','r'].forEach(function(s){var p=$('.arc.'+s,svg),len=p.getTotalLength();ORB[s]={el:p,len:len,nodes:[]};p.style.strokeDasharray=len+' '+(len+20);
     var samp=[];for(var L=0;L<=len;L+=4){var q=p.getPointAtLength(L);samp.push([L,q.x,q.y])}
-    $$('li.'+s,ov).forEach(function(e){var x=parseFloat(e.style.left),y=parseFloat(e.style.top),best=1e12,bl=0;samp.forEach(function(q){var d=(q[1]-x)*(q[1]-x)+(q[2]-y)*(q[2]-y);if(d<best){best=d;bl=q[0]}});ORB[s].nodes.push([bl/len,e])})});
+    $$('li.'+s,ov).forEach(function(e){var x=parseFloat(e.style.left),y=parseFloat(e.style.top),best=1e12,bl=0;samp.forEach(function(q){var d=(q[1]-x)*(q[1]-x)+(q[2]-y)*(q[2]-y);if(d<best){best=d;bl=q[0]}});ORB[s].nodes.push([bl/len,e]);
+      /* keep the text clear of the orbit line: push it outward as far as the arc bends under it */
+      var sp=$('span',e);if(sp&&!ORB.mob){var h=sp.offsetHeight,y0=y-14,y1=y-10+h+6,ex=0;samp.forEach(function(q){if(q[2]>=y0&&q[2]<=y1){var dx=s==='l'?x-q[1]:q[1]-x;if(dx>ex)ex=dx}});var off=Math.max(26,Math.ceil(ex)+20)+'px';if(s==='l')sp.style.right=off;else sp.style.left=off}
+      else if(sp){sp.style.right='';sp.style.left=''}})});
   var jt=$('.jn.t',svg),jb=$('.jn.b',svg);jt.setAttribute('cx',ORB.jt[0]);jt.setAttribute('cy',ORB.jt[1]);jb.setAttribute('cx',ORB.jb[0]);jb.setAttribute('cy',ORB.jb[1])}
 function thOrbitDraw(){var ov=$('#thOrbit');if(!ov||!ORB.l)return;var r={top:(G.orb!=null?G.orb:thAbs(ov))-scrollY},svg=$('.th-orb-svg',ov);
   var p=RM?1:Math.max(0,Math.min(1,(innerHeight*.62-r.top-ORB.jt[1])/Math.max(1,ORB.jb[1]-ORB.jt[1])));
