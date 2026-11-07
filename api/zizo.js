@@ -38,9 +38,9 @@ async function isOwner(req) {
 }
 
 async function askGemini(key, model, system, contents, fit, thinking) {
-  // thinking on: Gemini also sends a short summary of its reasoning, shown as "Thought for Xs" in the chat
-  const generationConfig = { temperature: 0.6, maxOutputTokens: thinking ? (fit ? 4096 : 2048) : (fit ? 1400 : 700) };
-  generationConfig.thinkingConfig = thinking ? { includeThoughts: true } : { thinkingBudget: 0 };
+  // speed first: ordinary questions get no thinking at all; a job-fit check gets a small, capped thinking budget
+  const generationConfig = { temperature: 0.6, maxOutputTokens: thinking ? 2600 : (fit ? 1400 : 700) };
+  generationConfig.thinkingConfig = thinking ? { thinkingBudget: 768 } : { thinkingBudget: 0 };
   const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
@@ -85,13 +85,14 @@ export default async function handler(req, res) {
 
   const ip = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() || (req.socket && req.socket.remoteAddress) || 'unknown';
   const visitor = crypto.createHash('sha256').update(ip + '|' + (process.env.ZIZO_SALT || 'andrew-portfolio')).digest('hex').slice(0, 32);
-  const owner = await isOwner(req);
-  const g = owner ? { allowed: true, used: 0 } : await gate(visitor);
+  // check owner and daily limit at the same time instead of one after the other
+  const [owner, g0] = await Promise.all([isOwner(req), gate(visitor)]);
+  const g = owner ? { allowed: true, used: 0 } : g0;
   if (!g.allowed) return res.json({ text: g.reason === 'global' ? BUSY_TEXT : LIMIT_TEXT, limited: true });
 
   const models = [...new Set([process.env.GEMINI_MODEL, 'gemini-flash-latest', 'gemini-flash-lite-latest', 'gemini-2.5-flash'].filter(Boolean))];
   for (const model of models) {
-    for (const thinking of [true, false]) {
+    for (const thinking of (body.fit ? [true, false] : [false])) {
       try {
         const a = await askGemini(key, model, system, contents, !!body.fit, thinking);
         if (a.status === 200 && a.text) {
