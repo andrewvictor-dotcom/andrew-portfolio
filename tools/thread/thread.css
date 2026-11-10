@@ -704,3 +704,44 @@ html[data-hdr=paper] .nav{--hbg:#EFEBE3}
 .th-wvs .th-h2 .w.u{position:relative;z-index:6}
 .th-h2 .w{display:inline-block;white-space:nowrap}.th-h1 .lt,.th-h2 .lt{position:relative;display:inline-block}
 .th-hero .th-h1 .lt::after,.th-wvs .th-h2 .lt::after{content:attr(data-c);position:absolute;inset:0;line-height:inherit;z-index:6;clip-path:inset(-30% -30% -30% 50%);pointer-events:none}
+
+/* projects: pencil drawing of the real cover → orange scan line → the real UI, in exactly the same place */
+@property --cd{syntax:'<percentage>';inherits:true;initial-value:0%}
+@property --cs{syntax:'<percentage>';inherits:true;initial-value:0%}
+.th-scene{position:relative}
+.th-scene:has(.th-cov)>svg{display:none}
+.th-scene:has(.th-cov){aspect-ratio:1.6}
+.hx-on .th-proj .th-scene:has(.th-cov){aspect-ratio:auto}
+.th-cov{position:absolute;inset:0;margin:0;display:flex;align-items:center;justify-content:center;pointer-events:none;container-type:size}
+.th-cvb{--cd:0%;--cs:0%;position:relative;display:block;width:min(100cqw,calc(100cqh * var(--ar)));aspect-ratio:var(--ar)}
+.th-cvb>img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;border-radius:12px;box-shadow:0 30px 60px -34px rgba(0,0,0,.55),0 0 0 1px rgba(0,0,0,.06);clip-path:inset(0 calc(100% - var(--cs)) 0 0 round 12px)}
+[data-mode=dark] .th-cvb>img{box-shadow:0 30px 60px -30px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.08)}
+.th-skt{position:absolute;inset:0;display:block;background:currentColor;opacity:.62;-webkit-mask-size:100% 100%;mask-size:100% 100%;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;clip-path:inset(0 0 calc(100% - var(--cd)) var(--cs))}
+.th-scan{position:absolute;top:-4%;bottom:-4%;left:var(--cs);width:2px;margin-left:-1px;background:#E35A32;box-shadow:0 0 14px 2px rgba(227,90,50,.55);opacity:0;z-index:3}
+.th-scan b{position:absolute;top:-22px;left:8px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#E35A32;white-space:nowrap;font-weight:500}
+.th-scan b::after{content:"";display:inline-block;width:5px;height:5px;margin-left:6px;border-radius:50%;background:#E35A32;vertical-align:middle;animation:kwBlink 1s steps(2) infinite}
+/* 1) the pencil drawing appears top to bottom  2) the scan line sweeps left to right, leaving the real UI behind it */
+[data-thv].on .th-cvb{animation:thCvDraw 1.1s cubic-bezier(.4,.1,.3,1) .15s forwards,thCvScan 1.9s cubic-bezier(.55,.05,.35,1) 1.45s forwards}
+@keyframes thCvDraw{to{--cd:100%}}
+@keyframes thCvScan{to{--cs:100%}}
+[data-thv].on .th-scan{animation:thCvLine 1.9s linear 1.45s forwards}
+@keyframes thCvLine{0%{opacity:0}6%,92%{opacity:1}100%{opacity:0}}
+.th-cvb:not(.has-sk)>img{clip-path:none;opacity:0;transition:opacity .6s}
+[data-thv].on .th-cvb:not(.has-sk)>img{opacity:1}
+.hx-on .th-proj .th-scene>.th-cov{max-width:none;max-height:none;width:auto;height:auto}
+/* each project's button sits under its title and description */
+.th-tt .th-explore{margin-top:26px}
+.hx-on .th-proj .th-pf{margin-top:12px}
+@media (prefers-reduced-motion:reduce){.th-cvb>img{opacity:1!important;clip-path:none!important}.th-skt,.th-scan{display:none}}
+
+/* About photo: same pencil-then-scan reveal as the project covers */
+.th-pt-ph .th-cvb{width:100%}
+.th-pt-ph .th-cvb>img{aspect-ratio:auto;object-fit:cover;object-position:50% 50%;border-radius:4px;box-shadow:none;clip-path:inset(0 calc(100% - var(--cs)) 0 0 round 4px)}
+.th-pt-ph .th-skt-img{background-color:#EFEBE3;background-size:cover;background-position:center;opacity:1;-webkit-mask:none;mask:none;border-radius:4px}
+/* project CTA: an outlined button — clear, but quieter than a solid fill */
+.th-proj .th-explore{border:1.5px solid currentColor;padding:14px 20px;border-radius:8px;background:transparent;color:inherit;font-weight:500;letter-spacing:.08em;transition:background .2s,color .2s,border-color .2s}
+.th-proj .th-explore span{transition:transform .2s}
+.th-proj .th-explore:hover{background:#B8532F;border-color:#B8532F;color:#fff}
+.th-proj .th-explore:hover span{transform:translate(3px,-3px)}
+.th-proj .th-explore:focus-visible{outline:2px solid #E35A32;outline-offset:3px}
+.th-proj .th-explore .th-lk{stroke:currentColor}

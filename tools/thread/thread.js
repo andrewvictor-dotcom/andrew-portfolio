@@ -76,8 +76,9 @@ function thHome(P,links){
   h+='<section class="th-sec th-hx-intro" data-mode="dark"><div class="th-w"><p class="th-mono th-k">Selected work · '+String(vis.length).padStart(2,'0')+' projects</p><h2 class="th-h2">Projects I<br>designed</h2><p class="th-lead">Products I designed from the first research to the shipped screens. Open any one for the full story.</p><p class="th-mono th-hx-hint">Keep scrolling <span>→</span></p></div><span class="th-pt" data-m="v" data-p=".9,0 .92,1"></span></section>';
   vis.forEach(function(p,k){var dark=k%2===1,met=(p.metric&&p.metric.value)?p.metric:null,lab=String(p.industry||p.tag||'').split('·')[0].trim();
     h+='<section class="th-sec th-proj" data-mode="'+(dark?'dark':'paper')+'"'+(isStudy(p)&&!thHome.st?(thHome.st=1,' id="studies"'):'')+' style="--c:'+esc(p.color)+'" data-proj="'+esc(p.id)+'"><div class="th-w"><div class="th-ph"><span class="th-mono">'+String(k+1).padStart(2,'0')+' / '+esc(isStudy(p)?'Self-initiated study':lab)+(p.lock?' <em class="th-lockb">'+lockSvg+'Password protected</em>':'')+'</span><p>'+esc(p.tagline||p.summary||'')+'</p></div>'+
-      '<div class="th-tt"><h2 class="th-title" style="--len:'+Math.max(5,String(p.title).length)+'">'+esc(p.title)+'</h2>'+(p.summary?'<p class="th-sum">'+esc(p.summary)+'</p>':'')+'</div><div class="th-scene" data-thv>'+thScene(p.id)+'</div>'+
-      '<div class="th-pf">'+(met?'<p class="th-met"><b>'+esc(met.value)+'</b><span>'+esc(met.label)+'</span></p>':'<p class="th-met"><span>'+esc(p.client||'')+'</span></p>')+'<button type="button" class="th-explore" data-case="'+esc(p.id)+'">'+(p.lock?lockSvg+'Unlock project':'Explore project')+' <span>↗</span></button></div></div>'+
+      '<div class="th-tt"><h2 class="th-title" style="--len:'+Math.max(5,String(p.title).length)+'">'+esc(p.title)+'</h2>'+(p.summary?'<p class="th-sum">'+esc(p.summary)+'</p>':'')+'<button type="button" class="th-explore" data-case="'+esc(p.id)+'">'+(p.lock?lockSvg+'Unlock project':'Explore project')+' <span>↗</span></button></div>'+
+      '<div class="th-scene" data-thv>'+thScene(p.id)+(p.cover?thCover(p):'')+'</div>'+
+      '<div class="th-pf">'+(met?'<p class="th-met"><b>'+esc(met.value)+'</b><span>'+esc(met.label)+'</span></p>':'<p class="th-met"><span>'+esc(p.client||'')+'</span></p>')+'</div></div>'+
       '<span class="th-pt" data-m="v" data-p="'+(k%2?'.08,0 .05,.30 .22,.34 .30,.55 .12,.80 .20,.95 .5,1':'.92,0 .95,.30 .78,.34 .70,.55 .88,.80 .80,.95 .5,1')+'"></span></section>'});
   h+='</div><div class="th-hx-bar" aria-hidden="true"><span class="th-mono th-hx-n"><b>01</b> / '+String(vis.length).padStart(2,'0')+'</span><i class="th-hx-prog"><i></i></i><span class="th-mono th-hx-t">Scroll</span></div></div><span class="th-pt" data-m="h" data-p=".025,0 .025,1"></span></div>';
   // resume
@@ -95,7 +96,7 @@ function thHome(P,links){
     T.map(function(t,i){var nx=T[i+1];return '<div class="kn-leaf" role="listitem" style="--i:'+i+'"><div class="kn-face kn-front"><div class="kn-mhead">'+nbH(t,i)+'</div><p class="th-mono kn-pg">'+String(i+1).padStart(2,'0')+'</p><blockquote class="kn-q">'+esc(t.quote)+'</blockquote>'+nbS(t)+'</div><div class="kn-face kn-back">'+(nx?nbH(nx,i+1):'<div class="kn-who kn-fin"><p class="th-mono kn-k">'+String(T.length).padStart(2,'0')+' notes</p><p class="kn-endq">Thank you, all of you.</p><svg viewBox="0 0 120 40" class="kn-heart" aria-hidden="true"><path d="M8 26C30 6 48 34 60 20S96 4 112 22"/></svg></div>')+'</div></div>'}).join('')+
     '<i class="kn-spine" aria-hidden="true"></i></div><p class="kn-count th-mono" aria-hidden="true"><b>01</b> / '+String(T.length).padStart(2,'0')+'</p></div><span class="th-pt" data-p=".04,0 .04,1"></span></section>'}
   // about
-  h+='<section class="th-sec th-about" data-mode="dark" id="about"><div class="th-w"><div class="th-ab"><div><h2 class="th-h2">'+esc(A.title)+'.</h2><p class="th-lead">'+esc(A.body)+'</p>'+(A.ahead?'<p class="th-mono">'+esc(A.ahead)+'</p>':'')+'</div>'+(P.photo?'<figure class="th-pt-ph"><img src="'+esc(P.photo)+'" alt="Portrait of '+esc(P.name)+'"><figcaption class="th-mono">'+esc(P.location)+'</figcaption></figure>':'')+'</div>'+
+  h+='<section class="th-sec th-about" data-mode="dark" id="about"><div class="th-w"><div class="th-ab"><div><h2 class="th-h2">'+esc(A.title)+'.</h2><p class="th-lead">'+esc(A.body)+'</p>'+(A.ahead?'<p class="th-mono">'+esc(A.ahead)+'</p>':'')+'</div>'+(P.photo?'<figure class="th-pt-ph" data-thv><span class="th-cvb has-sk" style="--ar:.8"><i class="th-skt th-skt-img" style="background-image:url(\''+esc(String(P.photo).replace(/\.\w+$/,'_sk.webp'))+'\')"></i><img src="'+esc(P.photo)+'" alt="Portrait of '+esc(P.name)+'"><i class="th-scan"><b class="th-mono">Rendering</b></i></span><figcaption class="th-mono">'+esc(P.location)+'</figcaption></figure>':'')+'</div>'+
      '<div class="th-sign"><h2 class="th-name">'+esc(P.name)+'.</h2>'+thSig('th-sig2')+'<p class="th-mono">'+esc(P.role)+' · '+esc(P.status)+'</p></div></div><span class="th-pt" data-p=".5,0 .9,.2 .93,.6 .80,.9 .78,1"></span></section>';
   h+='</div>';
   return h;
@@ -195,7 +196,9 @@ function thMeasure(P){var ptL=[0],S=[[0,P[0][0],P[0][1]]],L=0;
 function thAt(sg,L){var S=sg.S,lo=0,hi=S.length-1;if(!S||!S.length)return {x:0,y:0};while(hi-lo>1){var m=(lo+hi)>>1;if(S[m][0]<L)lo=m;else hi=m}var a=S[lo],b=S[hi],f=b[0]>a[0]?(L-a[0])/(b[0]-a[0]):0;return {x:a[1]+(b[1]-a[1])*f,y:a[2]+(b[2]-a[2])*f}}
 
 function thAbs(el){return el.getBoundingClientRect().top+scrollY}
-function thGeo(){var page=$('#thPage');if(!page)return;G.page=thAbs(page);
+/* project titles never run into the cover: shrink a title until its longest word fits its column */
+function thFitTitles(){$$('.th-proj .th-title').forEach(function(t){t.style.fontSize='';if(!$('#work.hx-on'))return;var fs=parseFloat(getComputedStyle(t).fontSize),n=0;while(t.scrollWidth>t.clientWidth+1&&n<40&&fs>24){fs*=.95;t.style.fontSize=fs.toFixed(1)+'px';n++}})}
+function thGeo(){var page=$('#thPage');if(!page)return;thFitTitles();G.page=thAbs(page);
   var w=$('#work.hx-on');if(w){var tr=$('.th-hx-track',w);G.w={top:thAbs(w),run:Math.max(1,w.offsetHeight-innerHeight),max:Math.max(0,tr.scrollWidth-innerWidth),lefts:$$('.th-proj',tr).map(function(s){return s.offsetLeft}),modes:$$('.th-proj',tr).map(function(s){return s.getAttribute('data-mode')}),intro:($('.th-hx-intro',w)||page).getAttribute('data-mode')}}else G.w=null;
   var k=$('.kn');G.kn=k?{top:thAbs(k),run:Math.max(1,k.offsetHeight-innerHeight),h:k.offsetHeight}:null;
   var o=$('#thOrbit');G.orb=o?thAbs(o):null;G.drift=$$('.th-drift .ln')}
@@ -253,6 +256,13 @@ function thLockAsk(p,done){if(LKPW){thUnlock(p,LKPW).then(done,function(){LKPW=n
     d.classList.add('busy');err.textContent='';thUnlock(p,v).then(function(){close();done()},function(){d.classList.remove('busy');err.textContent='That password didn\'t work. Try again or ask me for it.';inp.select();var c=$('.lk-card',d);c.classList.remove('shake');void c.offsetWidth;c.classList.add('shake')})};
   requestAnimationFrame(function(){d.classList.add('in');inp.focus()})}
 var thOpenCase=openCase;openCase=function(id,cx,cy,quiet){var p=(state.projects||[]).filter(function(x){return x.id===id})[0];if(p&&p.lock){thLockAsk(p,function(){thOpenCase(id,cx,cy,quiet)});return}return thOpenCase.apply(this,arguments)};
+
+/* project covers: a pencil drawing made from the real cover draws in, then an orange scan line turns it into the real UI, in place */
+var COVAR={'qarar-hiring-dashboard':800/460,'tryout':1.6,'workspace-enhancements':2000/854,'steel-construction-tool':1500/1300,'chatbot-vs-ai-agent':16/9};
+function thCover(p){var src=String(p.cover),ar=COVAR[p.id]||1.6,sk=/^media\/[0-9a-f]+\.\w+$/.test(src)?src.replace(/\.\w+$/,'_sk.webp'):'';
+  return '<figure class="th-cov" aria-hidden="true" style="--ar:'+ar.toFixed(4)+'"><span class="th-cvb'+(sk?' has-sk':'')+'">'+
+    (sk?'<i class="th-skt" style="-webkit-mask-image:url(\''+esc(sk)+'\');mask-image:url(\''+esc(sk)+'\')"></i>':'')+
+    '<img src="'+esc(src)+'" alt="" loading="lazy" decoding="async"><i class="th-scan"><b class="th-mono">Rendering</b></i></span></figure>'}
 /* ---- skills orbit: the thread splits at the top, draws both sides down, rejoins at the bottom ---- */
 var ORB={};
 function thOrbitLayout(mob){var ov=$('#thOrbit'),svg=$('.th-orb-svg',ov),w=ov.offsetWidth,li=$$('li',ov),L=li.filter(function(x){return x.classList.contains('l')}),R=li.filter(function(x){return x.classList.contains('r')});
@@ -294,7 +304,7 @@ function thStack(){var s=$('.kn');if(!s)return;var ls=$$('.kn-leaf',s),n=ls.leng
     l.style.setProperty('--sh',(Math.sin(e*Math.PI)).toFixed(3));l.classList.toggle('flip',f>.5);l.classList.toggle('on',i===cur&&f<.5)});
   s.classList.toggle('done',p>n-.5);var c=$('.kn-count b',s);if(c)c.textContent=String(Math.min(n,cur+1)).padStart(2,'0');}
 function nbFit(){$$('.kn-q').forEach(function(q){var mx=innerWidth<760?22:27,mn=15,fs=mx;q.style.fontSize=fs+'px';while(q.scrollHeight>q.clientHeight+1&&fs>mn){fs-=.5;q.style.fontSize=fs+'px'}})}
-addEventListener('resize',function(){nbFit()});if(document.fonts&&document.fonts.ready)document.fonts.ready.then(nbFit);setTimeout(nbFit,400);
+addEventListener('resize',function(){nbFit()});if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){nbFit();thFitTitles()});setTimeout(nbFit,400);
 /* ---- the knot at the end: a tangle that straightens when you reach for it ---- */
 function thKnotPts(t){var P=[],N=90;for(var i=0;i<=N;i++){var u=i/N,a=u*Math.PI*2*3.2,
   tx=200+Math.sin(a*1.03)*110+Math.sin(a*2.1+1)*48,ty=210+Math.cos(a*.97)*92+Math.sin(a*1.7)*52,lx=200,ly=10+u*400;
