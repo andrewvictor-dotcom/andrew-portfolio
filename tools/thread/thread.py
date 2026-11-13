@@ -6,6 +6,9 @@ def rep(a,b,n=1):
 a=h.index("  // hero\n");e=h.index("  h+=contactHtml(links);\n")+len("  h+=contactHtml(links);\n")
 h=h[:a]+"  h+=thHome(P,links);h+='</div>';\n  h+=contactHtml(links);\n"+h[e:]
 rep("logo-mark\">'+esc(initials(P.name))+'</span>","logo-mark\">'+TH_AV+'</span>")
+rep("function buildDoc(){","function buildDoc0(){")
+rep("['shots','Shots'],","['home','Homepage'],['drawer','Unreleased'],")
+rep("  if(t==='shots'){","  if(t==='home')return thAdminHome();if(t==='drawer')return thAdminDrawer();\n  if(t==='shots'){")
 rep("function wire(){blendCovers();","function wire(){blendCovers();thWire();")
 rep("function dots(){",open('thread.js').read()+"\nfunction dots(){")
 m=re.search(r'(<script type="application/json" id="state">)(.*?)(</script>)',h,re.S)
@@ -13,6 +16,11 @@ st=json.loads(m.group(2))
 NEW={'qarar-hiring-dashboard':'#96482E','tryout':'#9E3466','workspace-enhancements':'#337465','steel-construction-tool':'#88622F','chatbot-vs-ai-agent':'#685DB0'}
 for p in st['projects']:
     if p['id'] in NEW: p['color']=NEW[p['id']]
+if 'drawer' not in st: st['drawer']=[{'id':'widebot-d','title':'WideBot','sub':'Calm enterprise homepage','note':'Concept · not shipped','meta':['Arabic-first, English and Arabic','Version D of five directions','Names and numbers are demo values'],'proto':'drawer/widebot-d.html',
+ 'pins':[
+  {'s':'top','poster':'drawer/wbs-top.webp','cap':'the homepage','w':9,'r':-1.4},
+  {'s':'flow','poster':'drawer/wbs-flow.webp','cap':'one request, start to finish','w':6,'r':1.3,'dy':10,'hint':'plays on hover','scrub':1},
+  {'s':'live','poster':'drawer/wbs-live.webp','cap':'requests being solved right now','w':6,'r':-1.1,'dy':50}]}]
 js=json.dumps(st,ensure_ascii=False).replace('</','<\\/')
 h=h[:m.start(2)]+js+h[m.end(2):]
 h=h.replace("family=Bricolage+Grotesque","family=Caveat:wght@400;500;600&family=Archivo:wdth,wght@62..125,400..900&family=Bricolage+Grotesque")
