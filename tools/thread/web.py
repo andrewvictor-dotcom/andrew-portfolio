@@ -37,7 +37,7 @@ st=json.loads(re.search(r'id="state">(.*?)</script>',t,re.S).group(1).replace('<
 P=st['profile'];title=P['name']+' · '+P['role'];desc=P['lede'];B='https://andrew-portfolio-lemon.vercel.app'
 fav="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23D9643C'/%3E%3Ctext x='32' y='42' font-family='Arial,sans-serif' font-weight='800' font-size='26' text-anchor='middle' fill='%23fff'%3EAV%3C/text%3E%3C/svg%3E"
 head=f'''<meta name="description" content="{html.escape(desc)}">
-<meta property="og:type" content="website"><meta property="og:url" content="{B}/"><meta property="og:title" content="{html.escape(title)}"><meta property="og:description" content="{html.escape(desc)}"><meta property="og:image" content="{B}/og.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image">
+<meta property="og:type" content="website"><meta property="og:url" content="{B}/"><meta property="og:title" content="{html.escape(title)}"><meta property="og:description" content="{html.escape(desc)}"><meta property="og:image" content="{B}/og-2026.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#121214"><link rel="icon" href="{fav}"><link rel="preconnect" href="https://cegbdtgmhgsngfrstigc.supabase.co" crossorigin>
 '''
 t=re.sub(r'<title>[^<]*</title>','<title>'+html.escape(title)+'</title>\n'+head.replace('\\','\\\\'),t,count=1)

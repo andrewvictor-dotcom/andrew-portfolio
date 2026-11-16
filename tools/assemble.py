@@ -25,7 +25,7 @@ doc=f'''<!doctype html>
 <meta property="og:url" content="{BASE}/">
 <meta property="og:title" content="{html.escape(title)}">
 <meta property="og:description" content="{html.escape(desc)}">
-<meta property="og:image" content="{BASE}/og.jpg">
+<meta property="og:image" content="{BASE}/og-2026.jpg">
 <meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#E8EBF0" media="(prefers-color-scheme: light)">
