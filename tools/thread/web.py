@@ -33,6 +33,13 @@ def fn(code,name):
 lp=fn(la,'publish');tp=fn(ta,'publish')
 print(len(lp),len(tp))
 ta=ta.replace(tp,lp)
+E="'Publishing failed. Your edits are kept here, try again.'"
+assert E in ta
+ta=ta.replace(E,"'Publishing failed: '+m.slice(0,140)+'. Your edits are kept here. Send this message to Claude if it keeps happening.'")
+ta=ta.replace("var m=String(err&&(err.message||err.error)||err);","var m=String(err&&(err.message||err.error)||err);try{console.error('publish failed',err)}catch(_){}")
+G="var pb=$('#pubBtn');if(!admin.can)return;"
+assert G in ta
+ta=ta.replace(G,G+"if(!admin.dirty){toast('Nothing new to publish: the live site already shows everything. Change something in the editor first, then publish.');return}")
 ta=ta.replace('/* ---------- boot ----------',web+'/* ---------- boot ----------',1)
 ta=ta.replace("if(/^#p-[a-z0-9-]+$/.test(location.hash)){var hid=location.hash.slice(3);setTimeout(function(){openCaseQuiet(hid)},60)}\n(function(){","if(/^#p-[a-z0-9-]+$/.test(location.hash)){var hid=location.hash.slice(3);setTimeout(function(){openCaseQuiet(hid)},60)}\nownerBoot();\n(function(){",1)
 assert 'ownerBoot();' in ta

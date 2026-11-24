@@ -892,3 +892,5 @@ html.pb-lock{overflow:hidden}
  .zz-bubble #zzBubX{min-width:44px;min-height:44px}}
 @media (min-width:760px){.th-hero{padding-top:96px}.th-hero .th-h1{font-size:min(clamp(54px,10.4vw,168px),13.4svh)}}
 @media (max-width:759px){.th-hero{align-items:flex-start;padding-top:104px}.th-hero .th-ctas{padding-bottom:84px}}
+
+#pubBtn.idle,#pubBtn[data-idle]{opacity:.55}
