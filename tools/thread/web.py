@@ -10,6 +10,11 @@ assert old in ta;ta=ta.replace(old,"ag.fn=zizoServer;")
 # 2. editing: owner login + publish to Supabase (taken from the current live site)
 web=la[la.index('/* ---------- web: owner login'):la.index('/* ---------- boot')]
 web=web.replace("sb.from('site').upsert({id:'main',data:state,","sb.from('site').upsert({id:'main',data:thLockedCopy(state),")
+old="if(typeof v==='string'&&/^data:image\\//.test(v))"
+assert old in web,'up'
+web=web.replace(old,"if(typeof v==='string'&&/^data:(image\\/|application\\/pdf|text\\/markdown)/.test(v))")
+web=web.replace(".replace('svg+xml','svg');",".replace('svg+xml','svg').replace('markdown','md');")
+assert "replace('markdown','md')" in web
 assert 'thLockedCopy(state)' in web
 def fn(code,name):
     i=code.index('function '+name+'(');k=code.index('{',i);d=0;q=None;e=False
